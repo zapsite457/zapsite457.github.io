@@ -1,0 +1,5 @@
+(function(){var n=document.querySelector('.nav'),b=n&&n.querySelector('.burger');if(!b)return;b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o);b.setAttribute('aria-label',o?'Close menu':'Open menu')});n.querySelectorAll('nav a').forEach(function(a){a.addEventListener('click',function(){n.classList.remove('open');b.setAttribute('aria-expanded',false)})})})();
+(function(){var lb=document.getElementById('lb');if(!lb)return;var im=lb.querySelector('img'),cp=lb.querySelector('figcaption'),last;
+function close(){lb.hidden=true;document.body.style.overflow='';last&&last.focus()}
+document.querySelectorAll('.shot[data-full]').forEach(function(b){b.addEventListener('click',function(){last=b;im.src=b.dataset.full;im.alt=b.querySelector('img').alt;cp.innerHTML=b.dataset.cap;lb.hidden=false;document.body.style.overflow='hidden';lb.querySelector('.lbx').focus()})});
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.classList.contains('lbx'))close()});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!lb.hidden)close()})})();
