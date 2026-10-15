@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revision Request | Zapsite</title>
+<meta name="description" content="Request changes to your Zapsite website preview, or approve it for launch.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"><link rel="icon" href="img/favicon.svg" type="image/svg+xml"><link rel="icon" href="img/favicon-32.png" sizes="32x32" type="image/png"><link rel="apple-touch-icon" href="img/apple-touch-icon.png"><link rel="canonical" href="https://zapsite.com.au/revisions.html"><meta property="og:type" content="website"><meta property="og:site_name" content="Zapsite"><meta property="og:title" content="Revision Request | Zapsite"><meta property="og:description" content="Request changes to your Zapsite website preview, or approve it for launch."><meta property="og:url" content="https://zapsite.com.au/revisions.html"><meta property="og:image" content="https://zapsite.com.au/img/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:locale" content="en_AU"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Revision Request | Zapsite"><meta name="twitter:description" content="Request changes to your Zapsite website preview, or approve it for launch."><meta name="twitter:image" content="https://zapsite.com.au/img/og.png"></head><body>
+<header class="nav"><div class="w"><a class="logo" href="index.html" aria-label="Zapsite home"><img src="img/zapsite-logo-dark.svg" alt="Zapsite" width="134" height="32"></a><button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button><nav id="mnav"><div class="links"><a href="index.html#work">Work</a><a href="index.html#templates">Templates</a><a href="services.html">Services</a><a href="how-it-works.html">How it works</a><a href="pricing.html">Pricing</a><a href="faq.html">FAQ</a></div><a class="btn" href="get-started.html">Get started →</a></nav></div></header>
+<div class="fhero"><div class="w"><a class="back" href="index.html">← Back to home</a><h1>Revision Request</h1><p>One submission = one revision round. 2 rounds are included; each round is done within 3 working days with a new preview link. List everything you want changed in this round.</p></div></div><main class="fwrap">
+<form id="f" novalidate method="POST" action="https://formsubmit.co/ian.socialstudio@gmail.com" enctype="multipart/form-data">
+<fieldset><legend>Your project</legend><label for="project">Project / business name *</label><input type="text" id="project" name="project" required>
+<label for="email">Email *</label><input type="email" id="email" name="email" required>
+<label for="round">Round *</label><select id="round" name="round" required><option value="">Select…</option><option>1</option><option>2</option><option value="extra">Extra (A$99)</option></select></fieldset>
+<div id="pages"></div>
+<fieldset><label class="chk"><input type="checkbox" id="complete" name="complete"> This is my complete list for this round *</label></fieldset>
+<fieldset class="approve"><legend>Or approve your site</legend><label class="chk"><input type="checkbox" id="approve" name="approve"> Approve &amp; launch — no further changes. I'll pay the balance and my site goes live.</label></fieldset>
+<button class="btn" type="submit">Submit</button><div id="out" role="status" ></div></form></main>
+<script>
+const P=['Home','About','Services','Contact','Other'],pg=document.getElementById('pages');
+P.forEach(p=>{const k=p.toLowerCase();pg.insertAdjacentHTML('beforeend',`<fieldset><legend>${p}</legend><label for="${k}_text">Changes for ${p}</label><textarea id="${k}_text" name="${k}_text"></textarea><label for="${k}_img">Replacement images</label><input type="file" id="${k}_img" name="${k}_img" accept="image/*" multiple></fieldset>`)});
+const f=document.getElementById('f');
+function err(el,m){el.insertAdjacentHTML('afterend',`<div class="err">${m}</div>`)}
+f.addEventListener('submit',e=>{e.preventDefault();f.querySelectorAll('.err').forEach(x=>x.remove());let bad=0;
+const v=id=>document.getElementById(id);const ap=v('approve').checked;
+if(!v('project').value.trim()){err(v('project'),'Required');bad++}
+if(!/^\S+@\S+\.\S+$/.test(v('email').value)){err(v('email'),'Enter a valid email');bad++}
+if(!ap){if(!v('round').value){err(v('round'),'Required');bad++}
+ if(!P.some(p=>v(p.toLowerCase()+'_text').value.trim()||v(p.toLowerCase()+'_img').files.length)){err(v('home_text'),'Describe at least one change, or tick Approve & launch');bad++}
+ if(!v('complete').checked){err(v('complete').parentNode,'Please confirm');bad++}}
+if(totalFileBytes(f)>FILE_LIMIT){err(v('home_text'),'Images must total 10 MB or less per submission');bad++}
+if(bad)return;
+sendForm(f,{kind:ap?'approve':'revision',subject:(ap?'APPROVE & LAUNCH: ':'Revision request (round '+v('round').value+'): ')+v('project').value.trim(),out:v('out'),done:function(){showSuccess(f,ap?'Approved — thank you!':'Revision request received',ap?'We will email you the payment link for the balance. Your site goes live once payment is complete.':'We will complete this round within 3 working days and email a new preview link to <strong>'+v('email').value.trim().replace(/</g,'&lt;')+'</strong>.')}});
+});
+</script><script src="submit.js"></script><footer><div class="w"><div class="ft"><div><a class="logo" href="index.html" aria-label="Zapsite home"><img src="img/zapsite-logo-dark.svg" alt="Zapsite" width="134" height="32"></a><p>Professional websites for Australian local businesses.</p></div>
+<nav class="fl" aria-label="Footer"><a href="index.html">Home</a><a href="services.html">Services</a><a href="how-it-works.html">How it works</a><a href="pricing.html">Pricing</a><a href="faq.html">FAQ</a><a href="get-started.html">Get started</a><a href="revisions.html">Request a revision</a></nav></div>
+<div class="fb"><span>© 2026 Zapsite · ABN 58 843 461 747</span><span>All prices in AUD. GST not applicable.</span></div></div></footer><script src="site.js"></script><script src="motion.js" defer></script></body></html>
