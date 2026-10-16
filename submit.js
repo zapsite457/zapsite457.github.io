@@ -24,6 +24,11 @@ window.sendForm=function(f,o){ // o:{subject,out,done}
  if(bytes>MAX){out.innerHTML='<div class="msg bad">Your attachments total '+fmt(bytes)+'. The limit is 10 MB per submission — please remove or compress some images.</div>';return}
  if(bytes>0){ // multipart POST with redirect
   var next=new URL('thanks.html?form='+encodeURIComponent(o.kind||'form'),location.href).href;hid(f,'_next',next);
+  hid(f,'_captcha','false'); // FormSubmit's reCAPTCHA interstitial drops uploaded files; honeypot stays on
+  // FormSubmit keeps only the last file per field name, so give every file its own field (photos_1, photos_2…)
+  f.querySelectorAll('input[type=file]').forEach(function(inp){if(!inp.name||inp.files.length<2||typeof DataTransfer==='undefined')return;
+   var nm=inp.name;[].forEach.call(inp.files,function(x,i){var dt=new DataTransfer();dt.items.add(x);var c=document.createElement('input');c.type='file';c.name=nm+'_'+(i+1);c.hidden=true;c.files=dt.files;f.appendChild(c)});
+   inp.dataset.orig=nm;inp.removeAttribute('name')});
   f.action=EP;f.method='POST';f.enctype='multipart/form-data';
   if(btn){btn.disabled=true;btn.textContent='Sending…'}
   out.innerHTML='<div class="msg">Uploading your files… please keep this page open.</div>';
