@@ -442,3 +442,7 @@ body{color:#e8ecf7}
 @property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
 @keyframes spin{to{--ang:360deg}}
 @media(prefers-reduced-motion:reduce){.sprog,.cglow,*,*:before,*:after{animation:none!important;transition:none!important}}
+/* order form: prep note + always-open file fieldset (class rg skips the accordion) */
+form>.hint.prep{margin:0 0 18px;line-height:1.55}
+fieldset.rg.files{border:1px solid rgba(255,255,255,.14);background:var(--card);padding:26px;margin:0 0 20px;border-radius:var(--r);box-shadow:none}
+fieldset.rg.files>legend{display:block;float:none;width:auto;margin:0 0 6px;padding:0;background:none;color:#fff;font-weight:800;font-size:1.05rem}
