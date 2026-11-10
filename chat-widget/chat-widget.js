@@ -129,6 +129,27 @@
     return errors;
   }
 
+  function isActivationMessage(message) {
+    return /activat/i.test(String(message || ""));
+  }
+
+  function activationError(message) {
+    var error = new Error(message || "This form needs Activation");
+    error.code = "activation";
+    error.activationMessage = String(message || "");
+    console.warn(JSON.stringify({ enquiry: "activation", message: error.activationMessage }));
+    return error;
+  }
+
+  function enquiryStatusMessage(err, contactEmail) {
+    if (err && err.code === "activation") {
+      var who = contactEmail ? " (" + contactEmail + ")" : "";
+      return "FormSubmit needs a one-time activation for this website" + who + ". Open the activation email, click the link, then send this form again. Nothing has been delivered yet.";
+    }
+    var mail = contactEmail ? " Email " + contactEmail + " if it keeps failing." : "";
+    return "Sorry — your message could not be sent. Check your connection and try again." + mail;
+  }
+
   function postEnquiry(url, payload, fetchImpl) {
     var doFetch = fetchImpl || fetch;
     return doFetch(url, {
@@ -138,7 +159,9 @@
     }).then(function (res) {
       return res.json().then(function (data) {
         if (!res.ok || String(data && data.success) !== "true") {
-          throw new Error((data && data.message) || ("HTTP " + res.status));
+          var message = data && data.message ? String(data.message) : "";
+          if (isActivationMessage(message)) throw activationError(message);
+          throw new Error(message || ("HTTP " + res.status));
         }
         return data;
       });
@@ -162,7 +185,9 @@
       var obs = new MutationObserver(function () {
         if (out.querySelector(".msg.bad")) {
           obs.disconnect();
-          reject(new Error("The form could not be sent."));
+          var raw = out.textContent || "";
+          if (isActivationMessage(raw)) reject(activationError(raw.trim()));
+          else reject(new Error("The form could not be sent."));
         }
       });
       obs.observe(out, { childList: true, subtree: true });
@@ -334,6 +359,7 @@
       formView.hidden = !show;
       chatView.hidden = show;
       log.hidden = show;
+      panel.classList.toggle("is-form", show);
       if (show) nameF.input.focus();
       else { paint(); box.focus(); }
     }
@@ -462,11 +488,10 @@
         formView.reset();
         messages.push({ role: "assistant", content: "Your details have been sent to " + cfg.contactName + "." });
         saveHistory(cfg, messages);
-      }).catch(function () {
+      }).catch(function (err) {
         status.hidden = false;
         status.className = "zs-status bad";
-        var mail = cfg.contactEmail ? " Email " + cfg.contactEmail + " if it keeps failing." : "";
-        status.textContent = "Sorry — your message could not be sent. Check your connection and try again." + mail;
+        status.textContent = enquiryStatusMessage(err, cfg.contactEmail);
       }).then(function () {
         submit.disabled = false;
         submit.textContent = "Send to " + cfg.contactName;
@@ -483,6 +508,8 @@
     buildEnquiryPayload: buildEnquiryPayload,
     validateEnquiry: validateEnquiry,
     postEnquiry: postEnquiry,
+    enquiryStatusMessage: enquiryStatusMessage,
+    isActivationMessage: isActivationMessage,
     readConfig: readConfig,
     validHex: validHex
   };

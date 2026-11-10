@@ -50,7 +50,7 @@
   z-index: 80;
   right: max(16px, env(safe-area-inset-right));
   bottom: max(16px, env(safe-area-inset-bottom));
-  width: min(380px, calc(100vw - 24px));
+  width: min(420px, calc(100vw - 24px));
   max-height: calc(100dvh - 32px);
   margin: 0 !important;
   padding: 0 !important;
@@ -228,15 +228,30 @@
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+@media (min-width: 641px) {
+  .zs-panel {
+    width: 420px;
+    height: 560px;
+    max-height: calc(100dvh - 32px);
+  }
+  .zs-panel.is-form {
+    height: auto;
+    min-height: 560px;
+  }
+  .zs-log { max-height: none; }
+}
 @media (max-width: 640px) {
   .zs-launcher { width: 56px; height: 56px; }
   .zs-panel {
-    left: 12px;
-    right: 12px;
+    top: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    left: 8px;
+    right: 8px;
     width: auto;
-    max-height: calc(100dvh - 24px);
+    height: auto;
+    max-height: none;
   }
-  .zs-log { max-height: min(280px, calc(100dvh - 300px)); }
+  .zs-log, .zs-form { max-height: none; flex: 1 1 auto; min-height: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .zs-launcher, .zs-panel, .zs-launcher:hover { transition: none; transform: none; }
