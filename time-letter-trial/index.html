@@ -1,0 +1,1210 @@
+<!doctype html>
+<html lang="zh-Hant" data-style="peach">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>時差情書試用版</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+
+      /* ---------- 三種風格 ---------- */
+      [data-style="peach"]{
+        color-scheme: light;
+        --bg:#FFF4E8; --bg2:#FFE9D2; --surface:#FFFDF8; --surface2:#FFF1DE;
+        --ink:#46302A; --muted:#A07A68; --line:#F2D9BE;
+        --accent:#F96D4B; --accent-ink:#fff; --accent2:#FFB35C; --accent-soft:#FFE3CE;
+        --good:#2E9E77; --good-soft:#DFF5EA; --warn:#D97706; --warn-soft:#FDEFD3;
+        --danger:#D64545; --danger-soft:#FDE3E0;
+        --shadow:0 10px 30px rgba(190,110,60,.14);
+        --hero-a:#FF8A5C; --hero-b:#FFB35C;
+      }
+      [data-style="mint"]{
+        color-scheme: light;
+        --bg:#EDF9F1; --bg2:#D8F2E2; --surface:#FFFFFF; --surface2:#EAF7EE;
+        --ink:#22392E; --muted:#6E8B7B; --line:#CDE8D6;
+        --accent:#12A37C; --accent-ink:#fff; --accent2:#57C98B; --accent-soft:#D6F2E2;
+        --good:#0E8A5F; --good-soft:#D9F3E6; --warn:#C77400; --warn-soft:#FDEFD3;
+        --danger:#D64545; --danger-soft:#FDE3E0;
+        --shadow:0 10px 30px rgba(30,140,100,.14);
+        --hero-a:#17B083; --hero-b:#6FD598;
+      }
+      [data-style="night"]{
+        color-scheme: dark;
+        --bg:#14172B; --bg2:#1C1F3A; --surface:#232642; --surface2:#2B2E52;
+        --ink:#F4F1FF; --muted:#A6A3C7; --line:#3B3E63;
+        --accent:#FF8A66; --accent-ink:#2A1408; --accent2:#FFC24D; --accent-soft:#3A2E4A;
+        --good:#4ADE9E; --good-soft:#1E3D33; --warn:#FFC24D; --warn-soft:#3D3418;
+        --danger:#FF7A7A; --danger-soft:#40262E;
+        --shadow:0 10px 30px rgba(0,0,0,.4);
+        --hero-a:#3A3E6E; --hero-b:#6B4A7A;
+      }
+
+      body{
+        margin:0; background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
+        background-attachment:fixed; color:var(--ink);
+        font-family:"Noto Sans TC","Noto Sans SC",system-ui,-apple-system,"PingFang TC","PingFang SC","Microsoft JhengHei",sans-serif;
+        line-height:1.55;
+      }
+      .num{ font-family:"Baloo 2","Noto Sans TC",sans-serif; font-weight:700; letter-spacing:.01em; }
+      .wrap{ max-width:1060px; margin:0 auto; padding:0 16px 112px; }
+
+      /* ---------- 頂部列 ---------- */
+      header.topbar{
+        position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+        background:color-mix(in srgb, var(--bg) 82%, transparent);
+        border-bottom:1px solid var(--line);
+      }
+      .topbar-in{ max-width:1060px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+      .brand{ display:flex; align-items:center; gap:9px; margin-right:auto; }
+      .brand .logo{ width:38px; height:38px; flex:none; }
+      .brand .bname{ font-weight:900; font-size:1.06rem; line-height:1.15; }
+      .brand .ben{ font-size:.68rem; color:var(--muted); letter-spacing:.14em; font-weight:700; }
+      .pts-pill{ display:flex; align-items:center; gap:6px; background:var(--surface); border:1.5px solid var(--line);
+        border-radius:999px; padding:5px 13px 5px 9px; font-weight:800; box-shadow:var(--shadow); }
+      .pts-pill svg{ width:20px; height:20px; }
+      .ctl-group{ display:flex; align-items:center; gap:6px; }
+      .ctl-label{ font-size:.72rem; color:var(--muted); font-weight:700; }
+      .seg{ display:flex; background:var(--surface); border:1.5px solid var(--line); border-radius:999px; padding:3px; gap:2px; }
+      .seg button{ border:0; background:transparent; color:var(--muted); font:inherit; font-size:.8rem; font-weight:700;
+        padding:4px 11px; border-radius:999px; cursor:pointer; min-height:2rem; }
+      .seg button[aria-pressed="true"]{ background:var(--accent); color:var(--accent-ink); }
+      .swatches{ display:flex; gap:6px; }
+      .swatches button{ width:36px; height:36px; border-radius:50%; border:2.5px solid var(--line); cursor:pointer; padding:0; }
+      .swatches button[aria-pressed="true"]{ border-color:var(--accent); transform:scale(1.08); }
+      .sw-peach{ background:linear-gradient(135deg,#FF8A5C,#FFD9A0); }
+      .sw-mint{ background:linear-gradient(135deg,#17B083,#B9F0CE); }
+      .sw-night{ background:linear-gradient(135deg,#232642,#6B4A7A); }
+
+      /* ---------- 底部導航列 ---------- */
+      .bottom-nav{
+        position:fixed; left:0; right:0; bottom:0; z-index:60;
+        background:color-mix(in srgb, var(--surface) 96%, transparent);
+        backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+        border-top:1.5px solid var(--line);
+        box-shadow:0 -6px 24px rgba(0,0,0,.06);
+        padding-bottom:env(safe-area-inset-bottom, 0px);
+      }
+      .bottom-nav-in{
+        max-width:640px; margin:0 auto; display:flex; align-items:stretch;
+      }
+      .bnav-item{
+        flex:1 1 0; min-width:0; border:0; background:transparent; cursor:pointer;
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+        gap:2px; padding:8px 2px 7px; color:var(--muted);
+        font:inherit; font-size:.68rem; font-weight:700; line-height:1.15;
+        min-height:58px; position:relative; -webkit-tap-highlight-color:transparent;
+      }
+      .bnav-item svg{ width:22px; height:22px; flex:none; }
+      .bnav-item .bnav-label{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+      .bnav-item .bnav-dot{
+        width:5px; height:5px; border-radius:50%; background:transparent; margin-top:1px; flex:none;
+      }
+      .bnav-item[aria-selected="true"]{ color:var(--accent); font-weight:800; }
+      .bnav-item[aria-selected="true"] .bnav-dot{ background:var(--accent); }
+      [data-style="night"] .bnav-item[aria-selected="true"]{ color:var(--accent2); }
+      [data-style="night"] .bnav-item[aria-selected="true"] .bnav-dot{ background:var(--accent2); }
+      .settings-row{
+        display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
+        margin-top:18px; padding-top:16px; border-top:1.5px dashed var(--line);
+      }
+
+      main{ padding-top:14px; }
+      .view{ display:none; }
+      .view.active{ display:block; animation:fadein .25s ease; }
+      @keyframes fadein{ from{opacity:0; transform:translateY(5px);} to{opacity:1; transform:none;} }
+      @media (prefers-reduced-motion: reduce){ .view.active{ animation:none; } }
+
+      .grid{ display:grid; gap:14px; }
+      .grid-2{ grid-template-columns:1fr; }
+      @media (min-width:760px){ .grid-2{ grid-template-columns:1fr 1fr; } .grid-3{ grid-template-columns:repeat(3,1fr); } }
+      .grid-3{ grid-template-columns:1fr; }
+
+      .card{ background:var(--surface); border:1.5px solid var(--line); border-radius:20px; padding:18px; box-shadow:var(--shadow); }
+      .card h2{ margin:0 0 4px; font-size:1.13rem; font-weight:900; display:flex; align-items:center; gap:8px; }
+      .card h2 svg{ width:24px; height:24px; flex:none; }
+      .card h3{ margin:0 0 4px; font-size:1rem; font-weight:900; }
+      .sub{ color:var(--muted); font-size:.86rem; margin:0 0 10px; }
+      .tiny{ font-size:.76rem; color:var(--muted); }
+      .row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+      .spacer{ flex:1; }
+
+      /* ---------- Hero / 時鐘 ---------- */
+      .hero{ border-radius:24px; padding:22px 20px; color:#fff; position:relative; overflow:hidden;
+        background:linear-gradient(120deg,var(--hero-a),var(--hero-b)); box-shadow:var(--shadow); }
+      .hero h1{ margin:0; font-size:1.5rem; font-weight:900; line-height:1.25; }
+      .hero p{ margin:6px 0 0; opacity:.94; font-size:.92rem; max-width:34em; }
+      .hero .plane{ position:absolute; right:14px; top:10px; width:92px; opacity:.95; }
+      @media (max-width:560px){ .hero .plane{ width:52px; top:6px; right:10px; opacity:.85; } .hero h1{ font-size:1.28rem; } .hero p{ padding-right:44px; } }
+
+      .clocks{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+      @media (max-width:480px){ .clocks{ grid-template-columns:1fr; } }
+      .clock{ background:rgba(255,255,255,.16); border:1.5px solid rgba(255,255,255,.35); border-radius:18px; padding:14px 16px; }
+      .clock .city{ font-weight:900; font-size:.95rem; display:flex; justify-content:space-between; align-items:baseline; }
+      .clock .tz{ font-size:.68rem; font-weight:700; letter-spacing:.1em; background:rgba(0,0,0,.18); padding:2px 8px; border-radius:999px; }
+      .clock .time{ font-size:2.1rem; line-height:1.1; margin-top:2px; }
+      .clock .date{ font-size:.8rem; opacity:.9; }
+      .overlap{ margin-top:12px; background:rgba(0,0,0,.16); border-radius:14px; padding:10px 14px; font-size:.88rem; display:flex; gap:9px; align-items:center; flex-wrap:wrap; }
+      .overlap .dot{ width:10px; height:10px; border-radius:50%; background:#FFE29A; flex:none; }
+      .overlap.on .dot{ background:#7CFFB2; box-shadow:0 0 0 5px rgba(124,255,178,.25); }
+
+      .big-num{ font-size:2rem; line-height:1.05; }
+      .bar{ height:14px; border-radius:999px; background:var(--surface2); border:1px solid var(--line); overflow:hidden; }
+      .bar > i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .5s ease; }
+      .piggy{ width:74px; height:74px; flex:none; }
+
+      /* ---------- 按鈕 / 表單 ---------- */
+      .btn{ border:0; font:inherit; font-weight:800; font-size:.92rem; border-radius:999px; padding:9px 18px; cursor:pointer;
+        background:var(--accent); color:var(--accent-ink); min-height:2.6rem; display:inline-flex; align-items:center; gap:7px; justify-content:center; }
+      .btn:active{ transform:scale(.97); }
+      .btn.ghost{ background:var(--surface); color:var(--ink); border:1.5px solid var(--line); }
+      .btn.soft{ background:var(--accent-soft); color:var(--ink); }
+      .btn.good{ background:var(--good); color:#fff; }
+      .btn.danger{ background:var(--danger); color:#fff; }
+      .btn.sm{ padding:6px 13px; min-height:2.25rem; font-size:.84rem; }
+      .btn[disabled]{ opacity:.45; cursor:not-allowed; transform:none; }
+      input[type="text"], input[type="number"], select, textarea{
+        font:inherit; color:var(--ink); background:var(--surface); border:1.5px solid var(--line);
+        border-radius:12px; padding:8px 12px; min-height:2.6rem; width:100%;
+      }
+      label.f{ display:block; font-size:.8rem; font-weight:800; color:var(--muted); margin:0 0 5px; }
+      .chip{ display:inline-flex; align-items:center; gap:5px; font-size:.74rem; font-weight:800; padding:3px 10px; border-radius:999px; background:var(--surface2); border:1px solid var(--line); }
+      .chip.good{ background:var(--good-soft); color:var(--good); border-color:transparent; }
+      .chip.warn{ background:var(--warn-soft); color:var(--warn); border-color:transparent; }
+      .chip.acc{ background:var(--accent-soft); color:var(--ink); border-color:transparent; }
+
+      /* ---------- 任務 / 願望 ---------- */
+      .item{ display:flex; gap:12px; padding:13px 0; border-bottom:1.5px dashed var(--line); align-items:flex-start; }
+      .item:last-child{ border-bottom:0; padding-bottom:2px; }
+      .item .ic{ width:52px; height:52px; flex:none; border-radius:16px; background:var(--surface2); display:grid; place-items:center; }
+      .item .ic svg{ width:38px; height:38px; }
+      .item .body{ flex:1; min-width:0; }
+      .item .t{ font-weight:900; font-size:.98rem; }
+      .item .d{ font-size:.82rem; color:var(--muted); }
+      .pts{ font-weight:800; color:var(--accent); white-space:nowrap; }
+      [data-style="night"] .pts{ color:var(--accent2); }
+
+      /* ---------- 卡片 ---------- */
+      .bankcard{ border-radius:20px; padding:18px; color:#fff; position:relative; overflow:hidden; min-height:150px;
+        display:flex; flex-direction:column; justify-content:space-between; box-shadow:var(--shadow); }
+      .bankcard.daily{ background:linear-gradient(120deg,#F96D4B,#FF9E5C); }
+      .bankcard.credit{ background:linear-gradient(120deg,#5B4A8A,#8A5FA8); }
+      [data-style="mint"] .bankcard.credit{ background:linear-gradient(120deg,#0E7A5F,#2FBF9B); }
+      [data-style="night"] .bankcard.credit{ background:linear-gradient(120deg,#3A2E5E,#5E3A6E); }
+      .bankcard .cn{ font-weight:900; font-size:1.02rem; display:flex; justify-content:space-between; align-items:flex-start; }
+      .bankcard .cn svg{ width:44px; height:44px; }
+      .bankcard .bal{ font-size:1.9rem; line-height:1.1; }
+      .bankcard .meta{ font-size:.78rem; opacity:.92; display:flex; gap:14px; flex-wrap:wrap; }
+
+      /* ---------- 食物 ---------- */
+      .food-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px; }
+      .food{ background:var(--surface2); border:2px solid var(--line); border-radius:18px; padding:10px 6px 8px; text-align:center; cursor:pointer; font:inherit; color:var(--ink); }
+      .food svg{ width:56px; height:56px; }
+      .food .fn{ font-weight:800; font-size:.84rem; display:block; }
+      .food .fw{ font-size:.68rem; color:var(--muted); display:block; }
+      .food.picked{ border-color:var(--accent); background:var(--accent-soft); }
+      .food.rolling{ animation:wob .28s ease infinite alternate; }
+      @keyframes wob{ from{ transform:rotate(-3deg) scale(1);} to{ transform:rotate(3deg) scale(1.06);} }
+      @media (prefers-reduced-motion: reduce){ .food.rolling{ animation:none; } }
+      .stage{ text-align:center; padding:16px 10px 8px; }
+      .stage svg{ width:150px; height:150px; }
+      .stage .pick-name{ font-size:1.5rem; font-weight:900; margin-top:2px; }
+      .shake-wrap.shaking .stage svg{ animation:wob .16s ease infinite alternate; }
+
+      /* ---------- 視訊模擬 ---------- */
+      .video-box{ display:none; margin-top:14px; border-radius:18px; overflow:hidden; border:1.5px solid var(--line); background:#1B1B26; color:#fff; }
+      .video-box.open{ display:block; }
+      .video-grid{ display:grid; grid-template-columns:1fr 1fr; }
+      .video-cell{ aspect-ratio:4/3.4; display:grid; place-items:center; text-align:center; padding:10px; }
+      .video-cell svg{ width:76px; height:76px; }
+      .video-cell.a{ background:linear-gradient(150deg,#3A3E6E,#232642); }
+      .video-cell.b{ background:linear-gradient(150deg,#6E3A4E,#42232F); }
+      .video-bar{ display:flex; gap:8px; justify-content:center; padding:10px; flex-wrap:wrap; }
+
+      /* ---------- 位置 ---------- */
+      .switch{ position:relative; width:58px; height:34px; border-radius:999px; border:2px solid var(--line); background:var(--surface2); cursor:pointer; padding:0; flex:none; }
+      .switch::after{ content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:var(--muted); transition:all .2s; }
+      .switch[aria-checked="true"]{ background:var(--good); border-color:var(--good); }
+      .switch[aria-checked="true"]::after{ left:27px; background:#fff; }
+      .loc-map{ border-radius:18px; border:1.5px solid var(--line); background:var(--surface2); padding:16px; text-align:center; }
+      .loc-map svg{ width:120px; height:120px; }
+
+      .toast{ position:fixed; left:50%; bottom:86px; transform:translate(-50%,80px); z-index:99; background:var(--ink); color:var(--bg);
+        font-weight:800; font-size:.9rem; padding:11px 20px; border-radius:999px; box-shadow:var(--shadow); transition:transform .3s ease; max-width:92vw; text-align:center; }
+      .toast.show{ transform:translate(-50%,0); }
+      .note-box{ background:var(--warn-soft); border-radius:14px; padding:11px 14px; font-size:.84rem; }
+      .divider{ height:1.5px; background:var(--line); margin:16px 0; }
+      footer{ margin-top:26px; text-align:center; }
+      .kv{ display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1.5px dashed var(--line); font-size:.9rem; }
+      .kv:last-child{ border-bottom:0; }
+      .kv b{ font-weight:900; }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-in">
+        <div class="brand">
+          <svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect x="4" y="10" width="40" height="28" rx="6" fill="#F96D4B"/><path d="M4 16l20 13 20-13" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 33.5c-4.8-3.2-6.5-5.4-6.5-7.6 0-1.9 1.4-3.1 3-3.1 1.4 0 2.7.9 3.5 2.2.8-1.3 2.1-2.2 3.5-2.2 1.6 0 3 1.2 3 3.1 0 2.2-1.7 4.4-6.5 7.6z" fill="#FFD9A0"/></svg>
+          <div>
+            <div class="bname" id="brandName">時差情書</div>
+            <div class="ben">TIME LETTER</div>
+          </div>
+        </div>
+        <div class="pts-pill" title="心意點">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21C5.5 16.9 3 13.3 3 9.6 3 6.7 5.2 4.5 7.9 4.5c1.7 0 3.2.9 4.1 2.3.9-1.4 2.4-2.3 4.1-2.3 2.7 0 4.9 2.2 4.9 5.1 0 3.7-2.5 7.3-9 11.4z" fill="#F96D4B"/></svg>
+          <span class="num" id="ptsBalance">860</span><span class="tiny" data-i18n="ptsUnit">心意點</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 底部導航由頁面底部固定列提供，見 .bottom-nav -->
+
+    <div class="wrap">
+      <main>
+        <!-- ============ 首頁 ============ -->
+        <section class="view active" id="view-home" role="tabpanel">
+          <div class="hero">
+            <svg class="plane" viewBox="0 0 100 100" aria-hidden="true"><path d="M6 52L94 14 66 88 52 62z" fill="#fff" opacity=".92"/><path d="M52 62l42-48" stroke="#F96D4B" stroke-width="3" fill="none"/><path d="M20 78c8 6 18 8 28 5" stroke="#fff" stroke-width="3" stroke-dasharray="2 7" fill="none" stroke-linecap="round"/></svg>
+            <h1 data-i18n="heroTitle">相隔兩個城市，心意不遲到</h1>
+            <p data-i18n="heroSub">墨爾本與台北，相距約 7,400 公里、時差 2–3 小時。這裡是你們兩個人的小宇宙：一起做任務、存願望，在黃金重疊窗裡好好說話。</p>
+            <div class="clocks">
+              <div class="clock">
+                <div class="city"><span data-i18n="cityA">墨爾本</span><span class="tz">MEL · UTC+10/+11</span></div>
+                <div class="time num" id="clockA">--:--:--</div>
+                <div class="date" id="dateA">—</div>
+              </div>
+              <div class="clock">
+                <div class="city"><span data-i18n="cityB">台北</span><span class="tz">TPE · UTC+8</span></div>
+                <div class="time num" id="clockB">--:--:--</div>
+                <div class="date" id="dateB">—</div>
+              </div>
+            </div>
+            <div class="overlap" id="overlapBox">
+              <span class="dot"></span>
+              <span><b data-i18n="overlapTitle">黃金重疊窗</b> · <span data-i18n="overlapText">墨爾本 20:00–23:00 ＝ 台北 17:00–20:00，兩個人都醒著、最適合視訊的時間。</span> <b id="overlapState"></b></span>
+            </div>
+          </div>
+
+          <div class="grid grid-2" style="margin-top:14px;">
+            <div class="card">
+              <h2>
+                <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 26L42 8 32 40 26 30z" fill="#FFB35C"/><path d="M26 30l16-22" stroke="#F96D4B" stroke-width="2.6"/></svg>
+                <span data-i18n="meetTitle">下一次見面</span>
+              </h2>
+              <p class="sub" data-i18n="meetSub">紙飛機已經在路上了，倒數計時中。</p>
+              <div class="row" style="align-items:baseline;">
+                <span class="big-num num" id="cdDays">42</span>
+                <span data-i18n="daysUnit">天</span>
+                <span class="num" id="cdHms" style="font-size:1.15rem;">00:00:00</span>
+              </div>
+              <div class="kv"><span data-i18n="meetPlace">見面地點</span><b data-i18n="meetPlaceV">台北 · 一起吃小籠包</b></div>
+              <div class="kv"><span data-i18n="meetMode">見面模式</span><b data-i18n="meetModeV">基金存滿後自動解鎖</b></div>
+            </div>
+
+            <div class="card">
+              <h2>
+                <svg viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="27" rx="16" ry="13" fill="#FF9EBB"/><circle cx="17" cy="17" r="4" fill="#FF9EBB"/><circle cx="31" cy="17" r="4" fill="#FF9EBB"/><circle cx="24" cy="15" r="5" fill="#FFD9A0" stroke="#E8A33D" stroke-width="2"/><circle cx="20" cy="27" r="1.8" fill="#46302A"/><circle cx="28" cy="27" r="1.8" fill="#46302A"/><path d="M21 31q3 2.4 6 0" stroke="#46302A" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="15" cy="30" r="2.4" fill="#FFB3C6"/><circle cx="33" cy="30" r="2.4" fill="#FFB3C6"/></svg>
+                <span data-i18n="fundTitle">見面基金</span>
+              </h2>
+              <p class="sub" data-i18n="fundSub">兩個人一起存心意點，存滿就解鎖見面模式。基金只用來解鎖，不兌換現金。</p>
+              <div class="row">
+                <svg class="piggy" viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="27" rx="16" ry="13" fill="#FF9EBB"/><circle cx="17" cy="17" r="4" fill="#FF9EBB"/><circle cx="31" cy="17" r="4" fill="#FF9EBB"/><circle cx="24" cy="14" r="5" fill="#FFD9A0" stroke="#E8A33D" stroke-width="2"/><text x="24" y="18" text-anchor="middle" font-size="9" font-weight="bold" fill="#8A5A00">$</text><circle cx="20" cy="27" r="1.8" fill="#46302A"/><circle cx="28" cy="27" r="1.8" fill="#46302A"/><path d="M21 31q3 2.4 6 0" stroke="#46302A" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="15" cy="30" r="2.4" fill="#FFB3C6"/><circle cx="33" cy="30" r="2.4" fill="#FFB3C6"/></svg>
+                <div style="flex:1; min-width:180px;">
+                  <div class="row" style="justify-content:space-between;">
+                    <span><b class="num" id="fundNow" style="font-size:1.35rem;">6,800</b> <span class="tiny">/ <span class="num">10,000</span> <span data-i18n="ptsUnit2">點</span></span></span>
+                    <span class="chip acc"><span class="num" id="fundPct">68%</span></span>
+                  </div>
+                  <div class="bar" style="margin-top:8px;"><i id="fundBar" style="width:68%"></i></div>
+                </div>
+              </div>
+              <div class="row" style="margin-top:13px;">
+                <button type="button" class="btn sm" data-fund="100">+100 <span data-i18n="fundSave">存入</span></button>
+                <button type="button" class="btn sm soft" data-fund="300">+300 <span data-i18n="fundSave">存入</span></button>
+                <button type="button" class="btn sm ghost" data-fund="500">+500 <span data-i18n="fundSave">存入</span></button>
+                <span class="tiny" data-i18n="fundHint">從日常心意卡餘額存入</span>
+              </div>
+              <p class="tiny" id="fundMsg" style="margin:9px 0 0;"></p>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px;">
+            <h2>
+              <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="#FFD9A0"/><path d="M24 13v11l8 5" stroke="#B96A00" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg>
+              <span data-i18n="todayTitle">今日小抄</span>
+            </h2>
+            <div class="kv"><span data-i18n="fxToday">今日匯率（快照）</span><b class="num">1 AUD = NT$22.12</b></div>
+            <div class="kv"><span data-i18n="dailyCap">今日已賺 / 每日上限</span><b><span class="num" id="earnedToday">0</span> / <span class="num">300</span> <span data-i18n="ptsUnit2">點</span></b></div>
+            <div class="kv"><span data-i18n="streak">連續想念天數</span><b><span class="num">12</span> <span data-i18n="daysUnit">天</span></b></div>
+            <p class="tiny" style="margin:9px 0 0;" data-i18n="trialNote">試用版說明：所有功能都能點、能算；資料只存在這個頁面裡，重新整理就會重置，不會同步給任何人。</p>
+          </div>
+        </section>
+
+        <!-- ============ 任務與願望 ============ -->
+        <section class="view" id="view-tasks" role="tabpanel">
+          <div class="grid grid-2">
+            <div class="card">
+              <h2>
+                <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41C13 33.5 8 27.4 8 20.6 8 15.9 11.6 12.5 15.8 12.5c3.2 0 6.3 1.9 8.2 4.7 1.9-2.8 5-4.7 8.2-4.7 4.2 0 7.8 3.4 7.8 8.1C40 27.4 35 33.5 24 41z" fill="#F96D4B"/><circle cx="18" cy="21" r="1.7" fill="#fff"/><circle cx="30" cy="21" r="1.7" fill="#fff"/><path d="M19 26q5 3.6 10 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                <span data-i18n="taskTitle">想念任務</span>
+              </h2>
+              <p class="sub" data-i18n="taskSub">做完先送出審核，對方有空再確認（非同步審核）。60 點以下的小任務，對方 36 小時沒回覆會自動通過。</p>
+              <div id="taskList"></div>
+            </div>
+
+            <div class="card">
+              <h2>
+                <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="20" width="32" height="22" rx="4" fill="#FFB35C"/><rect x="8" y="20" width="32" height="7" fill="#F96D4B"/><rect x="21" y="20" width="6" height="22" fill="#F96D4B"/><path d="M24 20c-5 0-8-2.4-8-5.4C16 12 18 10.5 20 10.5c2.8 0 4 3.4 4 9.5zm0 0c5 0 8-2.4 8-5.4 0-2.6-2-4.1-4-4.1-2.8 0-4 3.4-4 9.5z" fill="#FFD9A0" stroke="#E8A33D" stroke-width="1.6"/></svg>
+                <span data-i18n="wishTitle">願望清單</span>
+              </h2>
+              <p class="sub" data-i18n="wishSub">每個願望同時寫清楚真實價格和所需點數，存滿點數就解鎖，由你們自己決定怎麼兌現。</p>
+              <div id="wishList"></div>
+              <div class="divider"></div>
+              <h3 data-i18n="wishNew">新增願望</h3>
+              <div class="grid" style="gap:10px;">
+                <div>
+                  <label class="f" for="wName" data-i18n="wishName">願望名稱</label>
+                  <input type="text" id="wName" data-i18n-ph="wishNamePh" placeholder="例如：一起去吃的那家餐廳" />
+                </div>
+                <div class="row" style="align-items:flex-end;">
+                  <div style="flex:1; min-width:130px;">
+                    <label class="f" for="wPrice" data-i18n="wishPrice">真實價格</label>
+                    <input type="number" id="wPrice" min="0" placeholder="1200" />
+                  </div>
+                  <div style="width:110px;">
+                    <label class="f" for="wCur" data-i18n="wishCur">貨幣</label>
+                    <select id="wCur">
+                      <option value="TWD">TWD</option><option value="AUD">AUD</option><option value="USD">USD</option>
+                      <option value="CNY">CNY</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="JPY">JPY</option>
+                    </select>
+                  </div>
+                  <div style="flex:1; min-width:130px;">
+                    <label class="f" for="wPts" data-i18n="wishPts">所需心意點</label>
+                    <input type="number" id="wPts" min="1" placeholder="1000" />
+                  </div>
+                </div>
+                <button type="button" class="btn" id="wishAdd" data-i18n="wishAdd">加入願望</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ 我的卡片 ============ -->
+        <section class="view" id="view-cards" role="tabpanel">
+          <div class="grid grid-2">
+            <div class="bankcard daily">
+              <div class="cn"><span data-i18n="dailyCard">日常心意卡</span>
+                <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 40C14.5 32.8 10 27.4 10 21.4 10 16.9 13.4 13.5 17.4 13.5c2.7 0 5.2 1.6 6.6 3.9 1.4-2.3 3.9-3.9 6.6-3.9 4 0 7.4 3.4 7.4 7.9C38 27.4 33.5 32.8 24 40z" fill="#fff" opacity=".9"/></svg>
+              </div>
+              <div>
+                <div class="tiny" style="color:rgba(255,255,255,.85)" data-i18n="balance">目前餘額</div>
+                <div class="bal num"><span id="dailyBal">860</span> <span style="font-size:1rem" data-i18n="ptsUnit2">點</span></div>
+                <div class="meta"><span data-i18n="cardHolder">持卡人：我 與 TA</span><span>···· 5201</span></div>
+              </div>
+            </div>
+            <div class="bankcard credit">
+              <div class="cn"><span data-i18n="creditCard">甜蜜信用額度</span>
+                <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6l3.4 8.3L36 15l-6.4 5.7 1.9 8.5L24 24.4l-7.5 4.8 1.9-8.5L12 15l8.6-.7z" fill="#FFD9A0"/></svg>
+              </div>
+              <div>
+                <div class="tiny" style="color:rgba(255,255,255,.85)" data-i18n="creditLimit">可用額度（點）</div>
+                <div class="bal num"><span id="creditAvail">1,350</span> / <span id="creditLimit">1,800</span></div>
+                <div class="meta"><span><span data-i18n="creditUsed">已用</span> <span class="num" id="creditUsed">450</span> <span data-i18n="ptsUnit2">點</span></span><span data-i18n="creditNote">先賒帳撒嬌，之後做任務慢慢還</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-2" style="margin-top:14px;">
+            <div class="card">
+              <h3 data-i18n="raiseTitle">申請調高信用額度</h3>
+              <p class="sub" data-i18n="raiseSub">送出後由對方審核；48 小時沒回覆不會自動扣點或調額。</p>
+              <div class="row" style="align-items:flex-end;">
+                <div style="flex:1; min-width:150px;">
+                  <label class="f" for="raiseAmt" data-i18n="raiseAmt">想調高多少點？</label>
+                  <select id="raiseAmt">
+                    <option value="200">+200</option><option value="500" selected>+500</option><option value="1000">+1000</option>
+                  </select>
+                </div>
+                <button type="button" class="btn" id="raiseBtn" data-i18n="raiseBtn">送出申請</button>
+              </div>
+              <div id="raiseBox" style="margin-top:12px;"></div>
+              <div class="divider"></div>
+              <h3 data-i18n="spendTitle">用信用額度撒個嬌</h3>
+              <p class="sub" data-i18n="spendSub">額度內可以先兌換小願望，點數之後補回來。</p>
+              <button type="button" class="btn soft" id="spendBtn"><span data-i18n="spendBtn">先用 150 點：請對方訂一杯珍珠奶茶</span></button>
+            </div>
+
+            <div class="card">
+              <h3 data-i18n="vaultTitle">小金庫 · 自訂換算</h3>
+              <p class="sub" data-i18n="vaultSub">點數值多少錢，由你們這一對自己定、自己調。例如：想買的東西 NT$1,200，就約好存 1,000 點解鎖。</p>
+              <div class="row" style="align-items:flex-end;">
+                <div style="flex:1; min-width:120px;">
+                  <label class="f" for="vaultPts" data-i18n="vaultPts">心意點</label>
+                  <input type="number" id="vaultPts" value="1000" min="1" />
+                </div>
+                <div style="align-self:center; font-weight:900; padding-top:16px;">=</div>
+                <div style="flex:1; min-width:120px;">
+                  <label class="f" for="vaultMoney" data-i18n="vaultMoney">金額</label>
+                  <input type="number" id="vaultMoney" value="1200" min="0" />
+                </div>
+                <div style="width:104px;">
+                  <label class="f" for="vaultCur" data-i18n="wishCur">貨幣</label>
+                  <select id="vaultCur">
+                    <option value="TWD" selected>TWD</option><option value="AUD">AUD</option><option value="USD">USD</option>
+                    <option value="CNY">CNY</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="JPY">JPY</option>
+                  </select>
+                </div>
+              </div>
+              <p style="margin:11px 0 0;"><b data-i18n="vaultRate">目前約定</b>：<span id="vaultEcho"></span></p>
+              <p class="tiny" data-i18n="vaultConfirm">改動換算需要兩個人都確認才生效（試用版按下方按鈕模擬對方確認）。</p>
+              <div class="row" style="margin-top:8px;">
+                <button type="button" class="btn sm soft" id="vaultApply" data-i18n="vaultApply">請對方確認新換算</button>
+                <span class="chip good" id="vaultState">已生效</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px;">
+            <h2>
+              <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="#FFD9A0"/><text x="24" y="31" text-anchor="middle" font-size="17" font-weight="bold" fill="#8A5A00">$</text></svg>
+              <span data-i18n="fxTitle">即時匯率 · 轉帳前先換算</span>
+            </h2>
+            <p class="sub" data-i18n="fxSub">不同國家用不同貨幣，先在這裡對一下大概金額。匯率為 2026-11-18 市場中間價快照，只供參考。</p>
+            <div class="row" style="align-items:flex-end;">
+              <div style="flex:1.2; min-width:140px;">
+                <label class="f" for="fxAmt" data-i18n="fxAmt">金額</label>
+                <input type="number" id="fxAmt" value="1200" min="0" />
+              </div>
+              <div style="width:110px;">
+                <label class="f" for="fxFrom" data-i18n="fxFrom">從</label>
+                <select id="fxFrom"><option>TWD</option><option selected>AUD</option><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option><option>JPY</option></select>
+              </div>
+              <button type="button" class="btn ghost sm" id="fxSwap" style="margin-bottom:2px;" aria-label="swap">⇄</button>
+              <div style="width:110px;">
+                <label class="f" for="fxTo" data-i18n="fxTo">換成</label>
+                <select id="fxTo"><option selected>TWD</option><option>AUD</option><option>USD</option><option>CNY</option><option>EUR</option><option>GBP</option><option>JPY</option></select>
+              </div>
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <button type="button" class="btn sm soft" data-qamt="50">50</button>
+              <button type="button" class="btn sm soft" data-qamt="100">100</button>
+              <button type="button" class="btn sm soft" data-qamt="500">500</button>
+              <button type="button" class="btn sm soft" data-qamt="1200">1200</button>
+            </div>
+            <p style="margin:13px 0 0; font-size:1.12rem;"><b class="num" id="fxResult">—</b></p>
+            <p class="tiny" id="fxRateLine">—</p>
+            <div class="note-box" data-i18n="fxNote">App 只顯示匯率供換算參考，不經手任何轉帳；真的要轉帳，請用你們自己的銀行或轉帳工具，實際金額以銀行為準。</div>
+          </div>
+        </section>
+
+        <!-- ============ 今天吃什麼 ============ -->
+        <section class="view" id="view-eat" role="tabpanel">
+          <div class="grid grid-2">
+            <div class="card shake-wrap" id="shakeCard">
+              <h2>
+                <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 30a16 13 0 0 1 32 0z" fill="#F96D4B"/><rect x="4" y="30" width="40" height="4.6" rx="2.3" fill="#FFB35C"/><path d="M24 17c0-3 3-3 3-6" stroke="#2E9E77" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>
+                <span data-i18n="eatTitle">今天吃什麼？搖一搖</span>
+              </h2>
+              <p class="sub" data-i18n="eatSub">不知道吃什麼的時候，讓命運決定。抽到一樣的，就視訊隔空吃一樣的。</p>
+              <div class="stage">
+                <div id="stageArt"></div>
+                <div class="pick-name" id="pickName" data-i18n="pickNone">按下方按鈕搖一搖</div>
+                <p class="tiny" id="pickHint"></p>
+              </div>
+              <div class="row" style="justify-content:center;">
+                <button type="button" class="btn" id="shakeBtn" data-i18n="shakeBtn">搖一搖</button>
+                <button type="button" class="btn ghost" id="askBtn" data-i18n="askBtn">請對方給意見</button>
+              </div>
+              <p class="tiny" id="askMsg" style="text-align:center; margin:9px 0 0;"></p>
+              <div class="row" style="justify-content:center; margin-top:6px;">
+                <button type="button" class="btn good" id="eatThisBtn" disabled data-i18n="eatThis">就吃這個</button>
+                <button type="button" class="btn soft" id="videoBtn" disabled data-i18n="videoBtn">視訊一起吃</button>
+              </div>
+              <div class="video-box" id="videoBox">
+                <div class="video-grid">
+                  <div class="video-cell a"><div><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="19" r="9" fill="#FFD9A0"/><path d="M8 42c2-9 8-13 16-13s14 4 16 13z" fill="#FFB35C"/><circle cx="21" cy="19" r="1.4" fill="#46302A"/><circle cx="27" cy="19" r="1.4" fill="#46302A"/><path d="M21.5 23q2.5 2 5 0" stroke="#46302A" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg><div data-i18n="meMel">我 · 墨爾本</div></div></div>
+                  <div class="video-cell b"><div><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="19" r="9" fill="#FFD9A0"/><path d="M8 42c2-9 8-13 16-13s14 4 16 13z" fill="#FF9EBB"/><circle cx="21" cy="19" r="1.4" fill="#46302A"/><circle cx="27" cy="19" r="1.4" fill="#46302A"/><path d="M21.5 23q2.5 2 5 0" stroke="#46302A" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg><div data-i18n="taTpe">TA · 台北</div></div></div>
+                </div>
+                <div class="video-bar">
+                  <span class="chip acc" id="videoDish">—</span>
+                  <button type="button" class="btn sm danger" id="videoEnd" data-i18n="videoEnd">結束視訊</button>
+                </div>
+                <p class="tiny" style="text-align:center; padding:0 12px 12px; color:#B9B6D9;" data-i18n="videoNote">試用版模擬畫面：正式版會接上真正的視訊通話。一起吃滿 20 分鐘，雙方各 +80 點。</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 data-i18n="foodListTitle">我們的愛吃清單</h3>
+              <p class="sub" data-i18n="foodListSub">兩個人共用一份清單，誰加的都標好了。點一下可以先選中，再搖也行。</p>
+              <div class="food-grid" id="foodGrid"></div>
+              <div class="divider"></div>
+              <h3 data-i18n="foodNew">加一道愛吃的</h3>
+              <div class="row" style="align-items:flex-end;">
+                <div style="flex:1; min-width:140px;">
+                  <label class="f" for="fName" data-i18n="foodName">食物名稱</label>
+                  <input type="text" id="fName" data-i18n-ph="foodNamePh" placeholder="例如：蚵仔煎" />
+                </div>
+                <div style="width:130px;">
+                  <label class="f" for="fIcon" data-i18n="foodIcon">選個小圖</label>
+                  <select id="fIcon">
+                    <option value="ramen">拉麵</option><option value="hotpot">火鍋</option><option value="sushi">壽司</option>
+                    <option value="burger">漢堡</option><option value="boba">珍珠奶茶</option><option value="dumpling">餃子</option>
+                    <option value="cake">蛋糕</option><option value="noodle">牛肉麵</option><option value="pasta">義大利麵</option><option value="chicken">鹹酥雞</option>
+                  </select>
+                </div>
+                <button type="button" class="btn" id="foodAdd" data-i18n="foodAdd">加入清單</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ 位置分享 ============ -->
+        <section class="view" id="view-loc" role="tabpanel">
+          <div class="grid grid-2">
+            <div class="card">
+              <h2>
+                <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 43S10 31.6 10 20.5a14 14 0 0 1 28 0C38 31.6 24 43 24 43z" fill="#F96D4B"/><circle cx="24" cy="20.5" r="6" fill="#fff"/><circle cx="22" cy="19" r="1.3" fill="#46302A"/><circle cx="26" cy="19" r="1.3" fill="#46302A"/><path d="M21.8 23q2.2 1.8 4.4 0" stroke="#46302A" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+                <span data-i18n="locTitle">位置分享</span>
+              </h2>
+              <p class="sub" data-i18n="locSub">預設關閉。只有你自己同意，才會開始分享；對方不能替你打開，隨時可以停。</p>
+              <div class="loc-map">
+                <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="46" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 6" opacity=".35"/><path d="M60 92S38 72 38 54a22 22 0 0 1 44 0c0 18-22 38-22 38z" fill="#F96D4B" opacity=".28" id="pinShape"/><circle cx="60" cy="54" r="8" fill="#F96D4B" opacity=".4"/></svg>
+                <div style="font-weight:900; font-size:1.05rem;" id="locStatus">目前未分享位置</div>
+                <p class="tiny" id="locDetail" style="margin:4px 0 0;">平時只顯示大概距離：相距約 7,400 公里，不顯示精確位置。</p>
+              </div>
+              <div class="row" style="margin-top:15px;">
+                <button type="button" class="switch" id="consentSwitch" role="switch" aria-checked="false" aria-label="consent"></button>
+                <b data-i18n="consentLabel">我同意分享我的位置</b>
+              </div>
+              <div id="locOptions" style="display:none; margin-top:13px;">
+                <label class="f" data-i18n="locDur">分享多久？</label>
+                <div class="row">
+                  <button type="button" class="btn sm soft" data-dur="30">30 <span data-i18n="minUnit">分鐘</span></button>
+                  <button type="button" class="btn sm soft" data-dur="120">2 <span data-i18n="hrUnit">小時</span></button>
+                  <button type="button" class="btn sm soft" data-dur="safe" data-i18n="safeBtn">只報一次平安</button>
+                </div>
+                <p class="tiny" data-i18n="locAuto">時間到會自動停止，不會 24 小時一直追蹤，也不會保存移動歷史。</p>
+                <div class="row">
+                  <button type="button" class="btn good sm" id="homeBtn" data-i18n="homeBtn">我到家了（報平安）</button>
+                  <button type="button" class="btn danger sm" id="stopBtn" data-i18n="stopBtn">立即停止分享</button>
+                </div>
+              </div>
+              <p class="tiny" id="locLog" style="margin-top:11px;"></p>
+            </div>
+
+            <div class="card">
+              <h3 data-i18n="privacyTitle">隱私規則（先講清楚）</h3>
+              <div class="kv"><span data-i18n="pv1">預設狀態</span><b data-i18n="pv1v">關閉</b></div>
+              <div class="kv"><span data-i18n="pv2">誰能開啟</span><b data-i18n="pv2v">只有本人，伴侶不能代開</b></div>
+              <div class="kv"><span data-i18n="pv3">單次最長</span><b data-i18n="pv3v">8 小時，到時自動停</b></div>
+              <div class="kv"><span data-i18n="pv4">平時可見</span><b data-i18n="pv4v">城市與大概距離</b></div>
+              <div class="kv"><span data-i18n="pv5">移動歷史</span><b data-i18n="pv5v">不保存，只留開關時間</b></div>
+              <div class="kv"><span data-i18n="pv6">隨時停止</span><b data-i18n="pv6v">一鍵立即停，對方會看到已停止</b></div>
+              <div class="note-box" style="margin-top:13px;" data-i18n="locNote">適合的時機：去機場接機的路上、夜歸報平安、見面日找人。不是用來查勤的。</div>
+            </div>
+          </div>
+        </section>
+
+        <footer>
+          <div class="settings-row" aria-label="設定">
+            <div class="ctl-group">
+              <span class="ctl-label" data-i18n="langLabel">語言</span>
+              <div class="seg" role="group" aria-label="Language">
+                <button type="button" data-lang="tw" aria-pressed="true">繁體</button>
+                <button type="button" data-lang="cn" aria-pressed="false">简体</button>
+                <button type="button" data-lang="en" aria-pressed="false">English</button>
+              </div>
+            </div>
+            <div class="ctl-group">
+              <span class="ctl-label" data-i18n="styleLabel">風格</span>
+              <div class="swatches" role="group" aria-label="Style">
+                <button type="button" class="sw-peach" data-style-btn="peach" aria-pressed="true" aria-label="奶油桃"></button>
+                <button type="button" class="sw-mint" data-style-btn="mint" aria-pressed="false" aria-label="薄荷綠"></button>
+                <button type="button" class="sw-night" data-style-btn="night" aria-pressed="false" aria-label="星夜"></button>
+              </div>
+            </div>
+          </div>
+          <p class="tiny" data-i18n="footerNote" style="margin-top:14px;">時差情書 Time Letter · 試用版 — 功能供體驗測試，點數與匯率均為示範資料。</p>
+        </footer>
+      </main>
+    </div>
+
+    <nav class="bottom-nav" aria-label="主選單">
+      <div class="bottom-nav-in" role="tablist">
+        <button type="button" class="bnav-item" role="tab" aria-selected="true" data-view="home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+          <span class="bnav-label" data-i18n="navHome">首頁</span>
+          <span class="bnav-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="bnav-item" role="tab" aria-selected="false" data-view="tasks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+          <span class="bnav-label" data-i18n="navTasks">任務</span>
+          <span class="bnav-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="bnav-item" role="tab" aria-selected="false" data-view="cards">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+          <span class="bnav-label" data-i18n="navCards">卡片</span>
+          <span class="bnav-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="bnav-item" role="tab" aria-selected="false" data-view="eat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 13a8 8 0 0 1 16 0z"/><path d="M2 20h20"/><path d="M12 5c0-1.5 1.5-1.5 1.5-3"/></svg>
+          <span class="bnav-label" data-i18n="navEat">吃什麼</span>
+          <span class="bnav-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="bnav-item" role="tab" aria-selected="false" data-view="loc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+          <span class="bnav-label" data-i18n="navLoc">位置</span>
+          <span class="bnav-dot" aria-hidden="true"></span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <script>
+    /* ================= Q 版食物小圖（統一風格：圓臉 + 腮紅） ================= */
+    function face(eyesY, mouthY){
+      return '<circle cx="36" cy="'+eyesY+'" r="2.6" fill="#46302A"/><circle cx="60" cy="'+eyesY+'" r="2.6" fill="#46302A"/>'
+        + '<path d="M42 '+mouthY+'q6 4.6 12 0" stroke="#46302A" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="28" cy="'+(mouthY-1)+'" r="4.4" fill="#FFB3C6" opacity=".85"/><circle cx="68" cy="'+(mouthY-1)+'" r="4.4" fill="#FFB3C6" opacity=".85"/>';
+    }
+    var FOOD_ART = {
+      ramen: '<svg viewBox="0 0 96 96"><path d="M14 44h68c0 16-10 30-26 33v5H40v-5C24 74 14 60 14 44z" fill="#F96D4B"/><path d="M14 44h68c0 4-1 7-2 10H16c-1-3-2-6-2-10z" fill="#fff" opacity=".35"/><ellipse cx="48" cy="42" rx="33" ry="7" fill="#FFD9A0"/><path d="M26 40q6-6 12 0t12 0 12 0 8-2" stroke="#E8A33D" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="62" cy="36" r="7" fill="#FFE9B8" stroke="#E8A33D" stroke-width="2"/><path d="M70 16l10 22M78 14l8 22" stroke="#8A5A2B" stroke-width="3.4" stroke-linecap="round"/></svg>',
+      hotpot: '<svg viewBox="0 0 96 96"><path d="M12 46h72c0 15-9 27-24 30v4H36v-4C21 73 12 61 12 46z" fill="#D64545"/><rect x="8" y="40" width="80" height="8" rx="4" fill="#8A2B2B"/><ellipse cx="48" cy="40" rx="34" ry="6" fill="#FF9E7A"/><circle cx="36" cy="38" r="5" fill="#FFE9B8"/><circle cx="56" cy="37" r="4.4" fill="#7BC67E"/><circle cx="47" cy="41" r="3.6" fill="#FFE9B8"/><path d="M30 22q4-6 0-10M48 24q4-6 0-10M66 22q4-6 0-10" stroke="#B9B6D9" stroke-width="3" fill="none" stroke-linecap="round"/>'+ '<g transform="translate(0,16)">'+face(52,58)+'</g></svg>',
+      sushi: '<svg viewBox="0 0 96 96"><ellipse cx="48" cy="78" rx="34" ry="6" fill="#46302A" opacity=".12"/><rect x="22" y="40" width="52" height="34" rx="14" fill="#FFF6EA"/><path d="M22 54h52" stroke="#E8DCC8" stroke-width="3"/><path d="M28 40c2-12 10-18 20-18s18 6 20 18c-12 5-28 5-40 0z" fill="#FF8A5C"/><path d="M36 30q12-5 24 0" stroke="#F96D4B" stroke-width="3" fill="none" stroke-linecap="round"/>'+face(58,64)+'</svg>',
+      burger: '<svg viewBox="0 0 96 96"><path d="M18 40c0-13 13-22 30-22s30 9 30 22z" fill="#F2A950"/><circle cx="36" cy="28" r="1.8" fill="#FFF3D6"/><circle cx="52" cy="24" r="1.8" fill="#FFF3D6"/><circle cx="62" cy="32" r="1.8" fill="#FFF3D6"/><path d="M14 44q8 7 16 0t16 0 16 0 16 0v4H14z" fill="#7BC67E"/><rect x="16" y="50" width="64" height="7" rx="3.5" fill="#FFD34D"/><path d="M18 60h60c0 9-6 14-14 14H32c-8 0-14-5-14-14z" fill="#F2A950"/>'+face(44,47)+'</svg>',
+      boba: '<svg viewBox="0 0 96 96"><path d="M28 26h40l-4 52a8 8 0 0 1-8 7H40a8 8 0 0 1-8-7z" fill="#F6C177"/><path d="M28 26h40l-1.4 14H29.4z" fill="#FFF3D6"/><circle cx="38" cy="72" r="4.6" fill="#4A2E20"/><circle cx="50" cy="76" r="4.6" fill="#4A2E20"/><circle cx="59" cy="70" r="4.6" fill="#4A2E20"/><circle cx="44" cy="66" r="4.2" fill="#4A2E20"/><path d="M56 4l-6 22" stroke="#F96D4B" stroke-width="6" stroke-linecap="round"/>'+face(50,56)+'</svg>',
+      dumpling: '<svg viewBox="0 0 96 96"><ellipse cx="48" cy="76" rx="32" ry="5" fill="#46302A" opacity=".12"/><path d="M14 62c0-16 14-26 20-28-1-4 3-7 6-4 1-4 7-5 9-1 3-3 8 0 7 4 7 2 16 13 16 29 0 5-4 8-9 8H23c-5 0-9-3-9-8z" fill="#FFF1DC"/><path d="M30 40q4 5 0 9M46 36q4 5 0 9M62 40q4 5 0 9" stroke="#EBCB9C" stroke-width="3" fill="none" stroke-linecap="round"/>'+face(56,62)+'</svg>',
+      cake: '<svg viewBox="0 0 96 96"><rect x="18" y="50" width="60" height="26" rx="7" fill="#FF9EBB"/><path d="M18 57q7 6 13 0t13 0 13 0 13 0 8-2v-5H18z" fill="#FFF3F6"/><rect x="26" y="32" width="44" height="20" rx="6" fill="#FFD9A0"/><path d="M26 39q6 5 11 0t11 0 11 0 11 0v-7H26z" fill="#FFF6EA"/><circle cx="48" cy="22" r="7" fill="#F9574F"/><path d="M48 15q2-5 7-6" stroke="#2E9E77" stroke-width="2.6" fill="none" stroke-linecap="round"/>'+face(63,68)+'</svg>',
+      noodle: '<svg viewBox="0 0 96 96"><path d="M14 44h68c0 16-10 30-26 33v5H40v-5C24 74 14 60 14 44z" fill="#5B8DEF"/><path d="M14 44h68c0 4-1 7-2 10H16c-1-3-2-6-2-10z" fill="#fff" opacity=".3"/><ellipse cx="48" cy="42" rx="33" ry="7" fill="#C96F2E"/><path d="M26 40q6-6 12 0t12 0 12 0 8-2" stroke="#8A4A14" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="56" y="30" width="13" height="9" rx="3" fill="#8A4A14"/><path d="M72 14l9 24" stroke="#8A5A2B" stroke-width="3.4" stroke-linecap="round"/></svg>',
+      pasta: '<svg viewBox="0 0 96 96"><ellipse cx="48" cy="72" rx="36" ry="9" fill="#BFD9EA"/><ellipse cx="48" cy="69" rx="30" ry="7" fill="#EAF4FB"/><path d="M26 62q10-14 22-12t20 10q-8 8-20 7t-22-5z" fill="#FFD34D"/><path d="M32 58q8-8 16-6M44 64q10 2 18-4" stroke="#E8A33D" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle cx="40" cy="50" r="6" fill="#F9574F"/><circle cx="58" cy="48" r="5" fill="#F9574F"/><path d="M66 22v26M60 22v10a6 6 0 0 0 12 0V22" stroke="#9AA3B2" stroke-width="3.2" fill="none" stroke-linecap="round"/></svg>',
+      chicken: '<svg viewBox="0 0 96 96"><path d="M22 34h52l-6 40a8 8 0 0 1-8 7H36a8 8 0 0 1-8-7z" fill="#F96D4B"/><rect x="20" y="28" width="56" height="9" rx="4.5" fill="#fff"/><path d="M34 22l4 10M48 18l2 12M62 22l-3 10" stroke="#E8A33D" stroke-width="5" stroke-linecap="round"/><circle cx="38" cy="52" r="5" fill="#F2A950"/><circle cx="56" cy="56" r="5.6" fill="#F2A950"/><circle cx="48" cy="44" r="4.4" fill="#F2A950"/>'+face(58,64)+'</svg>'
+    };
+    var TASK_ART = {
+      heart: '<svg viewBox="0 0 48 48"><path d="M24 41C13 33.5 8 27.4 8 20.6 8 15.9 11.6 12.5 15.8 12.5c3.2 0 6.3 1.9 8.2 4.7 1.9-2.8 5-4.7 8.2-4.7 4.2 0 7.8 3.4 7.8 8.1C40 27.4 35 33.5 24 41z" fill="#F96D4B"/><circle cx="18" cy="21" r="1.7" fill="#fff"/><circle cx="30" cy="21" r="1.7" fill="#fff"/><path d="M19 26q5 3.6 10 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
+      sun: '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="10" fill="#FFB35C"/><g stroke="#FFB35C" stroke-width="3.4" stroke-linecap="round"><path d="M24 5v5M24 38v5M5 24h5M38 24h5M11 11l3.5 3.5M33.5 33.5L37 37M37 11l-3.5 3.5M14.5 33.5L11 37"/></g><circle cx="20.5" cy="23" r="1.5" fill="#46302A"/><circle cx="27.5" cy="23" r="1.5" fill="#46302A"/><path d="M21 27q3 2.2 6 0" stroke="#46302A" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>',
+      moon: '<svg viewBox="0 0 48 48"><path d="M35 30.5A15 15 0 1 1 17.5 13 12 12 0 0 0 35 30.5z" fill="#8A7FD6"/><circle cx="20" cy="22" r="1.6" fill="#fff"/><circle cx="27" cy="25" r="1.6" fill="#fff"/><path d="M21 28q3 2 6 .5" stroke="#fff" stroke-width="1.7" fill="none" stroke-linecap="round"/><path d="M38 8l1.2 3L42 12l-2.8 1L38 16l-1.2-3L14 12z" fill="#FFD34D" transform="translate(0,0) scale(.8) translate(10,-2)"/></svg>',
+      photo: '<svg viewBox="0 0 48 48"><rect x="7" y="10" width="34" height="28" rx="5" fill="#7BC67E"/><circle cx="17" cy="19" r="3.4" fill="#FFD34D"/><path d="M9 36l10-10 7 7 5-5 8 8z" fill="#fff" opacity=".85"/><circle cx="20" cy="27" r="1.3" fill="#46302A"/><circle cx="28" cy="27" r="1.3" fill="#46302A"/></svg>',
+      mic: '<svg viewBox="0 0 48 48"><rect x="18" y="6" width="12" height="22" rx="6" fill="#5B8DEF"/><path d="M12 22a12 12 0 0 0 24 0" stroke="#5B8DEF" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="M24 36v6" stroke="#5B8DEF" stroke-width="3.4" stroke-linecap="round"/><circle cx="21" cy="15" r="1.4" fill="#fff"/><circle cx="27" cy="15" r="1.4" fill="#fff"/><path d="M21.5 19q2.5 1.8 5 0" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>',
+      gift: '<svg viewBox="0 0 48 48"><rect x="8" y="20" width="32" height="22" rx="4" fill="#FFB35C"/><rect x="8" y="20" width="32" height="7" fill="#F96D4B"/><rect x="21" y="20" width="6" height="22" fill="#F96D4B"/><path d="M24 20c-5 0-8-2.4-8-5.4C16 12 18 10.5 20 10.5c2.8 0 4 3.4 4 9.5zm0 0c5 0 8-2.4 8-5.4 0-2.6-2-4.1-4-4.1-2.8 0-4 3.4-4 9.5z" fill="#FFD9A0" stroke="#E8A33D" stroke-width="1.6"/></svg>',
+      star: '<svg viewBox="0 0 48 48"><path d="M24 5l4.6 10.4L40 17l-8.6 7.4 2.6 11.1L24 29.6l-10 5.9 2.6-11.1L8 17l11.4-1.6z" fill="#FFD34D"/><circle cx="20" cy="22" r="1.6" fill="#46302A"/><circle cx="28" cy="22" r="1.6" fill="#46302A"/><path d="M21 26q3 2.2 6 0" stroke="#46302A" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>'
+    };
+
+    /* ================= i18n ================= */
+    var I18N = {
+      tw: {
+        brand:"時差情書", ptsUnit:"心意點", ptsUnit2:"點", langLabel:"語言", styleLabel:"風格",
+        tabHome:"首頁", tabTasks:"任務與願望", tabCards:"我的卡片", tabEat:"今天吃什麼", tabLoc:"位置分享",
+        navHome:"首頁", navTasks:"任務", navCards:"卡片", navEat:"吃什麼", navLoc:"位置",
+        heroTitle:"相隔兩個城市，心意不遲到", heroSub:"墨爾本與台北，相距約 7,400 公里、時差 2–3 小時。這裡是你們兩個人的小宇宙：一起做任務、存願望，在黃金重疊窗裡好好說話。",
+        cityA:"墨爾本", cityB:"台北", overlapTitle:"黃金重疊窗", overlapText:"墨爾本 20:00–23:00 ＝ 台北 17:00–20:00，兩個人都醒著、最適合視訊的時間。",
+        overlapOn:"現在正是重疊窗，找 TA 聊聊吧", overlapOff:"現在不在重疊窗，可以留言等 TA 醒來",
+        meetTitle:"下一次見面", meetSub:"紙飛機已經在路上了，倒數計時中。", daysUnit:"天",
+        meetPlace:"見面地點", meetPlaceV:"台北 · 一起吃小籠包", meetMode:"見面模式", meetModeV:"基金存滿後自動解鎖",
+        fundTitle:"見面基金", fundSub:"兩個人一起存心意點，存滿就解鎖見面模式。基金只用來解鎖，不兌換現金。",
+        fundSave:"存入", fundHint:"從日常心意卡餘額存入", fundOk:"已存入見面基金", fundNo:"餘額不夠，先去做任務賺點吧", fundFull:"見面基金存滿了！見面模式解鎖",
+        todayTitle:"今日小抄", fxToday:"今日匯率（快照）", dailyCap:"今日已賺 / 每日上限", streak:"連續想念天數",
+        trialNote:"試用版說明：所有功能都能點、能算；資料只存在這個頁面裡，重新整理就會重置，不會同步給任何人。",
+        taskTitle:"想念任務", taskSub:"做完先送出審核，對方有空再確認（非同步審核）。60 點以下的小任務，對方 36 小時沒回覆會自動通過。",
+        doTask:"完成", pending:"待對方審核", approve:"模擬對方通過", approved:"已入帳", earnedMsg:"審核通過，心意點已入帳", sentMsg:"已送出，等對方有空審核", capMsg:"今天的點數已達每日上限 300 點",
+        wishTitle:"願望清單", wishSub:"每個願望同時寫清楚真實價格和所需點數，存滿點數就解鎖，由你們自己決定怎麼兌現。",
+        wishNew:"新增願望", wishName:"願望名稱", wishNamePh:"例如：一起去吃的那家餐廳", wishPrice:"真實價格", wishCur:"貨幣", wishPts:"所需心意點", wishAdd:"加入願望",
+        wishSaved:"已存", wishNeed:"還差", wishUnlock:"已解鎖！約時間兌現吧", wishSaveBtn:"存入 100 點", wishAdded:"願望已加入清單", wishFill:"請填好名稱、價格和點數",
+        dailyCard:"日常心意卡", balance:"目前餘額", cardHolder:"持卡人：我 與 TA",
+        creditCard:"甜蜜信用額度", creditLimit:"可用額度（點）", creditUsed:"已用", creditNote:"先賒帳撒嬌，之後做任務慢慢還",
+        raiseTitle:"申請調高信用額度", raiseSub:"送出後由對方審核；48 小時沒回覆不會自動扣點或調額。", raiseAmt:"想調高多少點？", raiseBtn:"送出申請",
+        raisePending:"申請已送出，等對方審核中…", raiseApprove:"模擬對方同意", raiseOk:"額度已調高", raiseSent:"申請已送出",
+        spendTitle:"用信用額度撒個嬌", spendSub:"額度內可以先兌換小願望，點數之後補回來。", spendBtn:"先用 150 點：請對方訂一杯珍珠奶茶",
+        spendOk:"已用信用額度兌換，記得做任務補回來", spendNo:"信用額度不夠了",
+        vaultTitle:"小金庫 · 自訂換算", vaultSub:"點數值多少錢，由你們這一對自己定、自己調。例如：想買的東西 NT$1,200，就約好存 1,000 點解鎖。",
+        vaultPts:"心意點", vaultMoney:"金額", vaultRate:"目前約定", vaultConfirm:"改動換算需要兩個人都確認才生效（試用版按下方按鈕模擬對方確認）。",
+        vaultApply:"請對方確認新換算", vaultWait:"等對方確認中…", vaultDone:"對方已確認，新換算生效", vaultEchoSuffix:"點 ＝ ",
+        fxTitle:"即時匯率 · 轉帳前先換算", fxSub:"不同國家用不同貨幣，先在這裡對一下大概金額。匯率為 2026-11-18 市場中間價快照，只供參考。",
+        fxAmt:"金額", fxFrom:"從", fxTo:"換成", fxRateText:"參考匯率", fxNote:"App 只顯示匯率供換算參考，不經手任何轉帳；真的要轉帳，請用你們自己的銀行或轉帳工具，實際金額以銀行為準。",
+        eatTitle:"今天吃什麼？搖一搖", eatSub:"不知道吃什麼的時候，讓命運決定。抽到一樣的，就視訊隔空吃一樣的。",
+        pickNone:"按下方按鈕搖一搖", shakeBtn:"搖一搖", askBtn:"請對方給意見", askMsg:"已把問題傳給對方，等 TA 回覆…（試用版：TA 通常會說「你決定就好」）",
+        eatThis:"就吃這個", videoBtn:"視訊一起吃", meMel:"我 · 墨爾本", taTpe:"TA · 台北", videoEnd:"結束視訊",
+        videoNote:"試用版模擬畫面：正式版會接上真正的視訊通話。一起吃滿 20 分鐘，雙方各 +80 點。",
+        pickedMsg:"就決定吃這個了！", videoStart:"視訊開始，一起開動！", byMe:"我加入的", byTa:"TA 加入的",
+        foodListTitle:"我們的愛吃清單", foodListSub:"兩個人共用一份清單，誰加的都標好了。點一下可以先選中，再搖也行。",
+        foodNew:"加一道愛吃的", foodName:"食物名稱", foodNamePh:"例如：蚵仔煎", foodIcon:"選個小圖", foodAdd:"加入清單", foodAdded:"已加入愛吃清單", foodFill:"請先填食物名稱",
+        locTitle:"位置分享", locSub:"預設關閉。只有你自己同意，才會開始分享；對方不能替你打開，隨時可以停。",
+        locOff:"目前未分享位置", locOffD:"平時只顯示大概距離：相距約 7,400 公里，不顯示精確位置。",
+        locOn:"正在分享位置", consentLabel:"我同意分享我的位置", locDur:"分享多久？", minUnit:"分鐘", hrUnit:"小時", safeBtn:"只報一次平安",
+        locAuto:"時間到會自動停止，不會 24 小時一直追蹤，也不會保存移動歷史。", homeBtn:"我到家了（報平安）", stopBtn:"立即停止分享",
+        locStarted:"已開始分享，對方現在看得到你的大概位置", locStopped:"已停止分享", locSafe:"已送出一次平安通知，沒有開啟連續定位",
+        locHome:"已告訴對方你平安到家了", locSharing:"分享中 · 對方看得到你的位置（試用版模擬）· 剩餘約", locLogPrefix:"紀錄：",
+        privacyTitle:"隱私規則（先講清楚）", pv1:"預設狀態", pv1v:"關閉", pv2:"誰能開啟", pv2v:"只有本人，伴侶不能代開", pv3:"單次最長", pv3v:"8 小時，到時自動停",
+        pv4:"平時可見", pv4v:"城市與大概距離", pv5:"移動歷史", pv5v:"不保存，只留開關時間", pv6:"隨時停止", pv6v:"一鍵立即停，對方會看到已停止",
+        locNote:"適合的時機：去機場接機的路上、夜歸報平安、見面日找人。不是用來查勤的。",
+        footerNote:"時差情書 Time Letter · 試用版 — 功能供體驗測試，點數與匯率均為示範資料。",
+        tasks:[["說早安加晚安","起床和睡前各留一句語音，跨時區也不缺席",30,"sun"],["傳一張今天的照片","現拍現傳，不用舊照片充數",40,"photo"],["語音說想你","錄一段 10 秒以上的語音給對方",50,"mic"],["陪對方視訊吃一餐","在黃金重疊窗一起吃飯 20 分鐘",80,"heart"],["手寫一封小情書","拍照傳過去，手寫的溫度不一樣",100,"gift"],["一起看一部電影","同步開播，邊看邊聊",120,"star"]],
+        wishes:[["請對方喝珍珠奶茶",1200,"TWD",1000,650],["一起去的那家餐廳晚餐",2600,"TWD",1500,300],["對方城市的一日小旅行",900,"AUD",1200,0]],
+        foods:[["ramen","日式拉麵","me"],["hotpot","麻辣火鍋","ta"],["sushi","壽司","me"],["burger","漢堡","ta"],["boba","珍珠奶茶","me"],["dumpling","水餃","ta"],["cake","草莓蛋糕","me"],["noodle","牛肉麵","ta"],["pasta","義大利麵","me"],["chicken","鹹酥雞","ta"]]
+      },
+      cn: {
+        brand:"时差情书", ptsUnit:"心意点", ptsUnit2:"点", langLabel:"语言", styleLabel:"风格",
+        tabHome:"首页", tabTasks:"任务与愿望", tabCards:"我的卡片", tabEat:"今天吃什么", tabLoc:"位置分享",
+        navHome:"首页", navTasks:"任务", navCards:"卡片", navEat:"吃什么", navLoc:"位置",
+        heroTitle:"相隔两个城市，心意不迟到", heroSub:"墨尔本与台北，相距约 7,400 公里、时差 2–3 小时。这里是你们两个人的小宇宙：一起做任务、存愿望，在黄金重叠窗里好好说话。",
+        cityA:"墨尔本", cityB:"台北", overlapTitle:"黄金重叠窗", overlapText:"墨尔本 20:00–23:00 ＝ 台北 17:00–20:00，两个人都醒着、最适合视频的时间。",
+        overlapOn:"现在正是重叠窗，找 TA 聊聊吧", overlapOff:"现在不在重叠窗，可以留言等 TA 醒来",
+        meetTitle:"下一次见面", meetSub:"纸飞机已经在路上了，倒数计时中。", daysUnit:"天",
+        meetPlace:"见面地点", meetPlaceV:"台北 · 一起吃小笼包", meetMode:"见面模式", meetModeV:"基金存满后自动解锁",
+        fundTitle:"见面基金", fundSub:"两个人一起存心意点，存满就解锁见面模式。基金只用来解锁，不兑换现金。",
+        fundSave:"存入", fundHint:"从日常心意卡余额存入", fundOk:"已存入见面基金", fundNo:"余额不够，先去做任务赚点吧", fundFull:"见面基金存满了！见面模式解锁",
+        todayTitle:"今日小抄", fxToday:"今日汇率（快照）", dailyCap:"今日已赚 / 每日上限", streak:"连续想念天数",
+        trialNote:"试用版说明：所有功能都能点、能算；数据只存在这个页面里，刷新就会重置，不会同步给任何人。",
+        taskTitle:"想念任务", taskSub:"做完先提交审核，对方有空再确认（异步审核）。60 点以下的小任务，对方 36 小时没回复会自动通过。",
+        doTask:"完成", pending:"待对方审核", approve:"模拟对方通过", approved:"已入账", earnedMsg:"审核通过，心意点已入账", sentMsg:"已提交，等对方有空审核", capMsg:"今天的点数已达每日上限 300 点",
+        wishTitle:"愿望清单", wishSub:"每个愿望同时写清楚真实价格和所需点数，存满点数就解锁，由你们自己决定怎么兑现。",
+        wishNew:"新增愿望", wishName:"愿望名称", wishNamePh:"例如：一起去吃的那家餐厅", wishPrice:"真实价格", wishCur:"货币", wishPts:"所需心意点", wishAdd:"加入愿望",
+        wishSaved:"已存", wishNeed:"还差", wishUnlock:"已解锁！约时间兑现吧", wishSaveBtn:"存入 100 点", wishAdded:"愿望已加入清单", wishFill:"请填好名称、价格和点数",
+        dailyCard:"日常心意卡", balance:"目前余额", cardHolder:"持卡人：我 与 TA",
+        creditCard:"甜蜜信用额度", creditLimit:"可用额度（点）", creditUsed:"已用", creditNote:"先赊账撒娇，之后做任务慢慢还",
+        raiseTitle:"申请调高信用额度", raiseSub:"提交后由对方审核；48 小时没回复不会自动扣点或调额。", raiseAmt:"想调高多少点？", raiseBtn:"提交申请",
+        raisePending:"申请已提交，等对方审核中…", raiseApprove:"模拟对方同意", raiseOk:"额度已调高", raiseSent:"申请已提交",
+        spendTitle:"用信用额度撒个娇", spendSub:"额度内可以先兑换小愿望，点数之后补回来。", spendBtn:"先用 150 点：请对方订一杯珍珠奶茶",
+        spendOk:"已用信用额度兑换，记得做任务补回来", spendNo:"信用额度不够了",
+        vaultTitle:"小金库 · 自定义换算", vaultSub:"点数値多少钱，由你们这一对自己定、自己调。例如：想买的东西 NT$1,200，就约好存 1,000 点解锁。",
+        vaultPts:"心意点", vaultMoney:"金额", vaultRate:"目前约定", vaultConfirm:"改动换算需要两个人确认才生效（试用版按下方按钮模拟对方确认）。",
+        vaultApply:"请对方确认新换算", vaultWait:"等对方确认中…", vaultDone:"对方已确认，新换算生效", vaultEchoSuffix:"点 ＝ ",
+        fxTitle:"实时汇率 · 转账前先换算", fxSub:"不同国家用不同货币，先在这里对一下大概金额。汇率为 2026-11-18 市场中间价快照，只供参考。",
+        fxAmt:"金额", fxFrom:"从", fxTo:"换成", fxRateText:"参考汇率", fxNote:"App 只显示汇率供换算参考，不经手任何转账；真的要转账，请用你们自己的银行或转账工具，实际金额以银行为准。",
+        eatTitle:"今天吃什么？摇一摇", eatSub:"不知道吃什么的时候，让命运决定。抽到一样的，就视频隔空吃一样的。",
+        pickNone:"按下方按钮摇一摇", shakeBtn:"摇一摇", askBtn:"请对方给意见", askMsg:"已把问题传给对方，等 TA 回复…（试用版：TA 通常会说「你决定就好」）",
+        eatThis:"就吃这个", videoBtn:"视频一起吃", meMel:"我 · 墨尔本", taTpe:"TA · 台北", videoEnd:"结束视频",
+        videoNote:"试用版模拟画面：正式版会接上真正的视频通话。一起吃满 20 分钟，双方各 +80 点。",
+        pickedMsg:"就决定吃这个了！", videoStart:"视频开始，一起开动！", byMe:"我加入的", byTa:"TA 加入的",
+        foodListTitle:"我们的爱吃清单", foodListSub:"两个人共用一份清单，谁加的都标好了。点一下可以先选中，再摇也行。",
+        foodNew:"加一道爱吃的", foodName:"食物名称", foodNamePh:"例如：蚵仔煎", foodIcon:"选个小图", foodAdd:"加入清单", foodAdded:"已加入爱吃清单", foodFill:"请先填食物名称",
+        locTitle:"位置分享", locSub:"默认关闭。只有你自己同意，才会开始分享；对方不能替你打开，随时可以停。",
+        locOff:"目前未分享位置", locOffD:"平时只显示大概距离：相距约 7,400 公里，不显示精确位置。",
+        locOn:"正在分享位置", consentLabel:"我同意分享我的位置", locDur:"分享多久？", minUnit:"分钟", hrUnit:"小时", safeBtn:"只报一次平安",
+        locAuto:"时间到会自动停止，不会 24 小时一直追踪，也不会保存移动历史。", homeBtn:"我到家了（报平安）", stopBtn:"立即停止分享",
+        locStarted:"已开始分享，对方现在看得到你的大概位置", locStopped:"已停止分享", locSafe:"已发送一次平安通知，没有开启连续定位",
+        locHome:"已告诉对方你平安到家了", locSharing:"分享中 · 对方看得到你的位置（试用版模拟）· 剩余约", locLogPrefix:"记录：",
+        privacyTitle:"隐私规则（先讲清楚）", pv1:"默认状态", pv1v:"关闭", pv2:"谁能开启", pv2v:"只有本人，伴侣不能代开", pv3:"单次最长", pv3v:"8 小时，到时自动停",
+        pv4:"平时可见", pv4v:"城市与大概距离", pv5:"移动历史", pv5v:"不保存，只留开关时间", pv6:"随时停止", pv6v:"一键立即停，对方会看到已停止",
+        locNote:"适合的时机：去机场接机的路上、夜归报平安、见面日找人。不是用来查勤的。",
+        footerNote:"时差情书 Time Letter · 试用版 — 功能供体验测试，点数与汇率均为示范数据。",
+        tasks:[["说早安加晚安","起床和睡前各留一句语音，跨时区也不缺席",30,"sun"],["传一张今天的照片","现拍现传，不用旧照片充数",40,"photo"],["语音说想你","录一段 10 秒以上的语音给对方",50,"mic"],["陪对方视频吃一餐","在黄金重叠窗一起吃饭 20 分钟",80,"heart"],["手写一封小情书","拍照传过去，手写的温度不一样",100,"gift"],["一起看一部电影","同步开播，边看边聊",120,"star"]],
+        wishes:[["请对方喝珍珠奶茶",1200,"TWD",1000,650],["一起去的那家餐厅晚餐",2600,"TWD",1500,300],["对方城市的一日小旅行",900,"AUD",1200,0]],
+        foods:[["ramen","日式拉面","me"],["hotpot","麻辣火锅","ta"],["sushi","寿司","me"],["burger","汉堡","ta"],["boba","珍珠奶茶","me"],["dumpling","水饺","ta"],["cake","草莓蛋糕","me"],["noodle","牛肉面","ta"],["pasta","意大利面","me"],["chicken","盐酥鸡","ta"]]
+      },
+      en: {
+        brand:"Time Letter", ptsUnit:"Heart Points", ptsUnit2:"pts", langLabel:"Language", styleLabel:"Style",
+        tabHome:"Home", tabTasks:"Tasks & Wishes", tabCards:"My Cards", tabEat:"What to Eat", tabLoc:"Location",
+        navHome:"Home", navTasks:"Tasks", navCards:"Cards", navEat:"Eat", navLoc:"Location",
+        heroTitle:"Two cities apart, never late at heart", heroSub:"Melbourne and Taipei: about 7,400 km and 2–3 hours apart. This is your little universe for two — do tasks together, save up wishes, and talk during the golden overlap window.",
+        cityA:"Melbourne", cityB:"Taipei", overlapTitle:"Golden overlap window", overlapText:"Melbourne 20:00–23:00 = Taipei 17:00–20:00, when you are both awake — the best time for a video call.",
+        overlapOn:"You are in the overlap window now — go say hi", overlapOff:"Outside the window now — leave a message for when they wake up",
+        meetTitle:"Next meeting", meetSub:"The paper plane is on its way. Counting down.", daysUnit:"days",
+        meetPlace:"Meeting place", meetPlaceV:"Taipei · soup dumplings together", meetMode:"Meeting mode", meetModeV:"Unlocks when the fund is full",
+        fundTitle:"Meeting fund", fundSub:"Save Heart Points together; fill it up to unlock meeting mode. The fund only unlocks — it never converts to cash.",
+        fundSave:"Save", fundHint:"Saved from your Daily Card balance", fundOk:"Saved into the meeting fund", fundNo:"Not enough balance — earn points from tasks first", fundFull:"Fund complete! Meeting mode unlocked",
+        todayTitle:"Today at a glance", fxToday:"Today's rate (snapshot)", dailyCap:"Earned today / daily cap", streak:"Missing-you streak",
+        trialNote:"Trial note: everything is tappable and really calculates. Data lives only in this page — refresh resets it, and nothing syncs to anyone.",
+        taskTitle:"Missing-you tasks", taskSub:"Finish a task and send it for review; your partner confirms when free (async review). Tasks under 60 pts auto-pass if unreviewed for 36 hours.",
+        doTask:"Done", pending:"Awaiting review", approve:"Simulate partner approval", approved:"Credited", earnedMsg:"Approved — points credited", sentMsg:"Sent — waiting for your partner to review", capMsg:"Daily cap of 300 pts reached",
+        wishTitle:"Wish list", wishSub:"Every wish shows both its real price and the points it costs. Fill the points to unlock it — how to redeem is up to you two.",
+        wishNew:"New wish", wishName:"Wish name", wishNamePh:"e.g. That restaurant we keep talking about", wishPrice:"Real price", wishCur:"Currency", wishPts:"Heart Points needed", wishAdd:"Add wish",
+        wishSaved:"saved", wishNeed:"to go", wishUnlock:"Unlocked! Time to make it happen", wishSaveBtn:"Save 100 pts", wishAdded:"Wish added", wishFill:"Fill in name, price and points",
+        dailyCard:"Daily Heart Card", balance:"Balance", cardHolder:"Cardholders: Me & TA",
+        creditCard:"Sweet Credit Line", creditLimit:"Available credit (pts)", creditUsed:"Used", creditNote:"Borrow a little sweetness now, repay with tasks later",
+        raiseTitle:"Request a higher credit limit", raiseSub:"Your partner reviews the request; no reply in 48 hours means no change and no deduction.", raiseAmt:"Raise by how many points?", raiseBtn:"Send request",
+        raisePending:"Request sent — waiting for review…", raiseApprove:"Simulate partner OK", raiseOk:"Limit raised", raiseSent:"Request sent",
+        spendTitle:"Spend credit on a little treat", spendSub:"Redeem a small wish on credit now and earn the points back later.", spendBtn:"Use 150 pts: partner orders me a bubble tea",
+        spendOk:"Redeemed on credit — earn it back with tasks", spendNo:"Not enough credit left",
+        vaultTitle:"Little vault · your own rate", vaultSub:"What points are worth is set by each couple. Example: the thing costs NT$1,200, so you agree it unlocks at 1,000 points.",
+        vaultPts:"Heart Points", vaultMoney:"Amount", vaultRate:"Your current rate", vaultConfirm:"Changing the rate needs both partners to agree before it takes effect (in this trial, the button simulates your partner).",
+        vaultApply:"Ask partner to confirm", vaultWait:"Waiting for partner…", vaultDone:"Partner confirmed — new rate active", vaultEchoSuffix:" pts = ",
+        fxTitle:"Live rates · check before you transfer", fxSub:"Different countries, different currencies — sanity-check amounts here first. Rates are a mid-market snapshot from 2026-11-18, for reference only.",
+        fxAmt:"Amount", fxFrom:"From", fxTo:"To", fxRateText:"Reference rate", fxNote:"The app only shows rates for reference and never handles transfers. Use your own bank or transfer service; the bank's actual amount applies.",
+        eatTitle:"What to eat today? Shake it", eatSub:"Can't decide? Let fate pick. Land on the same dish and eat it together over video.",
+        pickNone:"Tap below to shake", shakeBtn:"Shake", askBtn:"Ask partner", askMsg:"Sent to your partner… (trial: TA usually says “you decide”)",
+        eatThis:"Let's eat this", videoBtn:"Eat over video", meMel:"Me · Melbourne", taTpe:"TA · Taipei", videoEnd:"End call",
+        videoNote:"Trial mock screen: the real app will place an actual video call. Eat together for 20 minutes and you both earn +80 pts.",
+        pickedMsg:"Decided — this is the one!", videoStart:"Video on — let's eat!", byMe:"Added by me", byTa:"Added by TA",
+        foodListTitle:"Our favourite foods", foodListSub:"One shared list for two, labelled by who added each dish. Tap to pre-pick, or just shake.",
+        foodNew:"Add a favourite", foodName:"Food name", foodNamePh:"e.g. Oyster omelette", foodIcon:"Pick an icon", foodAdd:"Add to list", foodAdded:"Added to the list", foodFill:"Enter a food name first",
+        locTitle:"Location sharing", locSub:"Off by default. Sharing starts only with your own consent; your partner can't switch it on for you, and you can stop anytime.",
+        locOff:"Location not shared", locOffD:"Normally only rough distance shows: about 7,400 km apart, never an exact location.",
+        locOn:"Sharing location", consentLabel:"I agree to share my location", locDur:"Share for how long?", minUnit:"min", hrUnit:"hours", safeBtn:"One safety ping only",
+        locAuto:"It stops automatically when time is up — no 24-hour tracking, and no movement history is kept.", homeBtn:"I'm home (safety ping)", stopBtn:"Stop sharing now",
+        locStarted:"Sharing started — your partner can now see your rough location", locStopped:"Sharing stopped", locSafe:"Safety ping sent — no continuous tracking started",
+        locHome:"Your partner knows you got home safe", locSharing:"Sharing · partner can see you (trial simulation) · about", locLogPrefix:"Log: ",
+        privacyTitle:"Privacy rules (up front)", pv1:"Default", pv1v:"Off", pv2:"Who can turn it on", pv2v:"Only you — never your partner", pv3:"Max per session", pv3v:"8 hours, then auto-stop",
+        pv4:"Normally visible", pv4v:"City and rough distance", pv5:"Movement history", pv5v:"Never stored — on/off times only", pv6:"Stop anytime", pv6v:"One tap; partner sees it stopped",
+        locNote:"Good moments: on the way to the airport pickup, getting home late, finding each other on meeting day. Not for checking up on each other.",
+        footerNote:"Time Letter · Trial — features are for hands-on testing; points and rates are demo data.",
+        tasks:[["Say good morning & good night","Leave a voice note when you wake and before bed — across time zones",30,"sun"],["Send a photo from today","Taken in the moment, no old photos",40,"photo"],["Voice-note: I miss you","Record a voice note of 10+ seconds",50,"mic"],["Eat a meal together on video","20 minutes together in the overlap window",80,"heart"],["Handwrite a mini love letter","Photo it and send — handwriting feels different",100,"gift"],["Watch a movie together","Press play at the same time and chat along",120,"star"]],
+        wishes:[["Bubble tea from my partner",1200,"TWD",1000,650],["Dinner at that restaurant together",2600,"TWD",1500,300],["A day trip in my partner's city",900,"AUD",1200,0]],
+        foods:[["ramen","Ramen","me"],["hotpot","Spicy hotpot","ta"],["sushi","Sushi","me"],["burger","Burger","ta"],["boba","Bubble tea","me"],["dumpling","Dumplings","ta"],["cake","Strawberry cake","me"],["noodle","Beef noodles","ta"],["pasta","Pasta","me"],["chicken","Salted crispy chicken","ta"]]
+      }
+    };
+
+    /* ================= 狀態（只存在記憶體，重新整理重置） ================= */
+    var state = {
+      lang: "tw",
+      balance: 860,
+      earnedToday: 0,
+      fund: 6800, fundGoal: 10000,
+      creditLimit: 1800, creditUsed: 450,
+      raisePending: 0,
+      vault: { pts: 1000, money: 1200, cur: "TWD", pending: false },
+      tasks: [], wishes: [], foods: [],
+      pickedFood: -1, rolling: false,
+      loc: { on: false, endsAt: 0, log: [] }
+    };
+    var FX = { AUD: 1, TWD: 22.12, USD: 0.6512, CNY: 4.714, EUR: 0.5615, GBP: 0.4935, JPY: 101.6 }; /* 每 1 AUD 可換多少，2026-11-18 快照 */
+
+    function t(k){ return I18N[state.lang][k] || I18N.tw[k] || k; }
+    function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+    function fmt(n){ return n.toLocaleString("en-US"); }
+    function $(id){ return document.getElementById(id); }
+    var toastTimer = null;
+    function toast(msg){
+      var el = $("toast"); el.textContent = msg; el.classList.add("show");
+      clearTimeout(toastTimer); toastTimer = setTimeout(function(){ el.classList.remove("show"); }, 2600);
+    }
+
+    function seed(){
+      var d = I18N[state.lang];
+      state.tasks = d.tasks.map(function(x){ return { name: x[0], desc: x[1], pts: x[2], icon: x[3], status: "todo" }; });
+      state.wishes = d.wishes.map(function(x){ return { name: x[0], price: x[1], cur: x[2], need: x[3], saved: x[4] }; });
+      state.foods = d.foods.map(function(x){ return { icon: x[0], name: x[1], by: x[2] }; });
+    }
+
+    /* ================= 渲染 ================= */
+    function renderBalance(){
+      $("ptsBalance").textContent = fmt(state.balance);
+      $("dailyBal").textContent = fmt(state.balance);
+      $("earnedToday").textContent = fmt(state.earnedToday);
+    }
+    function renderFund(){
+      $("fundNow").textContent = fmt(state.fund);
+      var pct = Math.min(100, Math.round(state.fund / state.fundGoal * 100));
+      $("fundPct").textContent = pct + "%";
+      $("fundBar").style.width = pct + "%";
+    }
+    function renderCredit(){
+      $("creditLimit").textContent = fmt(state.creditLimit);
+      $("creditUsed").textContent = fmt(state.creditUsed);
+      $("creditAvail").textContent = fmt(state.creditLimit - state.creditUsed);
+    }
+    function renderTasks(){
+      var html = "";
+      state.tasks.forEach(function(task, i){
+        var right = "";
+        if (task.status === "todo") right = '<button type="button" class="btn sm" data-task-done="'+i+'">'+t("doTask")+'</button>';
+        else if (task.status === "pending") right = '<span class="chip warn">'+t("pending")+'</span><button type="button" class="btn sm soft" data-task-approve="'+i+'">'+t("approve")+'</button>';
+        else right = '<span class="chip good">'+t("approved")+' +'+task.pts+'</span>';
+        html += '<div class="item"><div class="ic">'+(TASK_ART[task.icon]||TASK_ART.heart)+'</div><div class="body"><div class="t">'+esc(task.name)+'</div><div class="d">'+esc(task.desc)+'</div></div><div style="text-align:right;"><div class="pts num">+'+task.pts+' '+t("ptsUnit2")+'</div><div style="margin-top:6px;" class="row">'+right+'</div></div></div>';
+      });
+      $("taskList").innerHTML = html;
+    }
+    function renderWishes(){
+      var html = "";
+      state.wishes.forEach(function(w, i){
+        var pct = Math.min(100, Math.round(w.saved / w.need * 100));
+        var done = w.saved >= w.need;
+        html += '<div class="item" style="display:block;"><div class="row" style="justify-content:space-between;"><div class="t" style="font-weight:900;">'+esc(w.name)+'</div>'
+          + (done ? '<span class="chip good">'+t("wishUnlock")+'</span>' : '<button type="button" class="btn sm" data-wish-save="'+i+'">'+t("wishSaveBtn")+'</button>') + '</div>'
+          + '<div class="row" style="margin-top:5px;"><span class="chip acc">'+t("wishPrice")+' '+w.cur+' '+fmt(w.price)+'</span><span class="chip">'+t("wishPts")+' '+fmt(w.need)+'</span><span class="tiny">'+t("wishSaved")+' <b class="num">'+fmt(w.saved)+'</b> · '+t("wishNeed")+' <b class="num">'+fmt(Math.max(0, w.need - w.saved))+'</b></span></div>'
+          + '<div class="bar" style="margin-top:8px;"><i style="width:'+pct+'%"></i></div></div>';
+      });
+      $("wishList").innerHTML = html || '<p class="sub">—</p>';
+    }
+    function renderFoods(){
+      var html = "";
+      state.foods.forEach(function(f, i){
+        html += '<button type="button" class="food'+(i===state.pickedFood?" picked":"")+'" data-food="'+i+'">'+FOOD_ART[f.icon]+'<span class="fn">'+esc(f.name)+'</span><span class="fw">'+(f.by==="me"?t("byMe"):t("byTa"))+'</span></button>';
+      });
+      $("foodGrid").innerHTML = html;
+      if (state.pickedFood >= 0 && state.foods[state.pickedFood]) {
+        $("stageArt").innerHTML = FOOD_ART[state.foods[state.pickedFood].icon];
+        $("pickName").textContent = state.foods[state.pickedFood].name;
+      } else {
+        $("stageArt").innerHTML = FOOD_ART.ramen;
+        $("pickName").textContent = t("pickNone");
+      }
+    }
+    function renderVault(){
+      var v = state.vault;
+      $("vaultEcho").innerHTML = '<span class="num">'+fmt(v.pts)+'</span>'+t("vaultEchoSuffix")+'<span class="num">'+v.cur+' '+fmt(v.money)+'</span>';
+      $("vaultState").textContent = v.pending ? t("vaultWait") : "✓";
+      $("vaultState").className = "chip " + (v.pending ? "warn" : "good");
+      if (!v.pending) $("vaultState").textContent = state.lang === "en" ? "Active" : (state.lang === "cn" ? "已生效" : "已生效");
+    }
+    function renderFx(){
+      var amt = parseFloat($("fxAmt").value) || 0;
+      var from = $("fxFrom").value, to = $("fxTo").value;
+      var inAud = amt / FX[from];
+      var out = inAud * FX[to];
+      var dec = (to === "JPY" || from === "JPY") ? 0 : 2;
+      $("fxResult").textContent = fmt(Math.round(amt*100)/100) + " " + from + " ≈ " + out.toLocaleString("en-US",{minimumFractionDigits:dec, maximumFractionDigits:dec}) + " " + to;
+      $("fxRateLine").textContent = t("fxRateText") + "：1 " + from + " = " + (FX[to]/FX[from]).toLocaleString("en-US",{maximumFractionDigits:4}) + " " + to + " · 1 AUD = NT$22.12";
+    }
+    function renderLoc(){
+      var on = state.loc.on;
+      $("consentSwitch").setAttribute("aria-checked", on ? "true" : "false");
+      $("locOptions").style.display = on ? "block" : "none";
+      if (on) {
+        var mins = Math.max(0, Math.round((state.loc.endsAt - Date.now()) / 60000));
+        $("locStatus").textContent = t("locOn");
+        $("locDetail").textContent = t("locSharing") + " " + mins + " " + t("minUnit");
+      } else {
+        $("locStatus").textContent = t("locOff");
+        $("locDetail").textContent = t("locOffD");
+      }
+      $("locLog").textContent = state.loc.log.length ? t("locLogPrefix") + state.loc.log.join(" · ") : "";
+    }
+    function renderAll(){ renderBalance(); renderFund(); renderCredit(); renderTasks(); renderWishes(); renderFoods(); renderVault(); renderFx(); renderLoc(); }
+
+    /* ================= 時鐘與倒數 ================= */
+    var meetTarget = Date.now() + 42 * 24 * 3600 * 1000;
+    function tick(){
+      var now = new Date();
+      var opt = { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" };
+      var dOpt = { weekday: "short", month: "numeric", day: "numeric" };
+      var loc = state.lang === "en" ? "en-AU" : (state.lang === "cn" ? "zh-CN" : "zh-TW");
+      try {
+        $("clockA").textContent = new Intl.DateTimeFormat(loc, Object.assign({ timeZone: "Australia/Melbourne" }, opt)).format(now);
+        $("dateA").textContent = new Intl.DateTimeFormat(loc, Object.assign({ timeZone: "Australia/Melbourne" }, dOpt)).format(now);
+        $("clockB").textContent = new Intl.DateTimeFormat(loc, Object.assign({ timeZone: "Asia/Taipei" }, opt)).format(now);
+        $("dateB").textContent = new Intl.DateTimeFormat(loc, Object.assign({ timeZone: "Asia/Taipei" }, dOpt)).format(now);
+        var melHour = parseInt(new Intl.DateTimeFormat("en-GB", { timeZone: "Australia/Melbourne", hour: "2-digit", hour12: false }).format(now), 10);
+        var on = melHour >= 20 && melHour < 23;
+        $("overlapBox").classList.toggle("on", on);
+        $("overlapState").textContent = on ? t("overlapOn") : t("overlapOff");
+      } catch(e) {}
+      var diff = Math.max(0, meetTarget - Date.now());
+      var days = Math.floor(diff / 86400000);
+      var h = Math.floor(diff % 86400000 / 3600000), m = Math.floor(diff % 3600000 / 60000), s = Math.floor(diff % 60000 / 1000);
+      $("cdDays").textContent = days;
+      $("cdHms").textContent = [h, m, s].map(function(x){ return String(x).padStart(2, "0"); }).join(":");
+      if (state.loc.on && Date.now() > state.loc.endsAt) { stopLoc(false); }
+      else if (state.loc.on) { renderLoc(); }
+    }
+
+    /* ================= 位置 ================= */
+    function nowTimeStr(){
+      return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+    function stopLoc(manual){
+      state.loc.on = false; state.loc.endsAt = 0;
+      state.loc.log.push(nowTimeStr() + " " + t("locStopped"));
+      renderLoc();
+      if (manual !== false) toast(t("locStopped"));
+    }
+
+    /* ================= 事件 ================= */
+    document.querySelectorAll(".bnav-item").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        document.querySelectorAll(".bnav-item").forEach(function(b){ b.setAttribute("aria-selected", "false"); });
+        btn.setAttribute("aria-selected", "true");
+        document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+        $("view-" + btn.getAttribute("data-view")).classList.add("active");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+
+    document.querySelectorAll("[data-lang]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var keep = { balance: state.balance, earnedToday: state.earnedToday, fund: state.fund, creditLimit: state.creditLimit, creditUsed: state.creditUsed };
+        state.lang = btn.getAttribute("data-lang");
+        document.querySelectorAll("[data-lang]").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+        document.documentElement.lang = state.lang === "en" ? "en" : (state.lang === "cn" ? "zh-CN" : "zh-Hant");
+        $("brandName").textContent = t("brand");
+        document.querySelectorAll("[data-i18n]").forEach(function(el){ var k = el.getAttribute("data-i18n"); if (I18N[state.lang][k]) el.textContent = I18N[state.lang][k]; });
+        document.querySelectorAll("[data-i18n-ph]").forEach(function(el){ var k = el.getAttribute("data-i18n-ph"); if (I18N[state.lang][k]) el.placeholder = I18N[state.lang][k]; });
+        var taskStatus = state.tasks.map(function(x){ return x.status; });
+        var wishSaved = state.wishes.map(function(x){ return x.saved; });
+        seed();
+        state.tasks.forEach(function(x, i){ if (taskStatus[i]) x.status = taskStatus[i]; });
+        state.wishes.forEach(function(x, i){ if (wishSaved[i] != null) x.saved = Math.min(wishSaved[i], x.need); });
+        Object.assign(state, keep);
+        state.pickedFood = -1;
+        $("eatThisBtn").disabled = true; $("videoBtn").disabled = true;
+        renderAll(); tick();
+      });
+    });
+
+    document.querySelectorAll("[data-style-btn]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        document.documentElement.setAttribute("data-style", btn.getAttribute("data-style-btn"));
+        document.querySelectorAll("[data-style-btn]").forEach(function(b){ b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+      });
+    });
+
+    document.querySelectorAll("[data-fund]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var amt = parseInt(btn.getAttribute("data-fund"), 10);
+        if (state.fund >= state.fundGoal) { toast(t("fundFull")); return; }
+        if (state.balance < amt) { toast(t("fundNo")); return; }
+        state.balance -= amt; state.fund = Math.min(state.fundGoal, state.fund + amt);
+        renderBalance(); renderFund();
+        toast(state.fund >= state.fundGoal ? t("fundFull") : t("fundOk") + " +" + amt);
+      });
+    });
+
+    $("taskList").addEventListener("click", function(e){
+      var done = e.target.closest("[data-task-done]");
+      var appr = e.target.closest("[data-task-approve]");
+      if (done) {
+        var task = state.tasks[parseInt(done.getAttribute("data-task-done"), 10)];
+        task.status = "pending"; renderTasks(); toast(t("sentMsg"));
+      }
+      if (appr) {
+        var tk = state.tasks[parseInt(appr.getAttribute("data-task-approve"), 10)];
+        if (state.earnedToday + tk.pts > 300) { toast(t("capMsg")); return; }
+        tk.status = "approved"; state.balance += tk.pts; state.earnedToday += tk.pts;
+        renderTasks(); renderBalance(); toast(t("earnedMsg") + " +" + tk.pts);
+      }
+    });
+
+    $("wishList").addEventListener("click", function(e){
+      var btn = e.target.closest("[data-wish-save]");
+      if (!btn) return;
+      var w = state.wishes[parseInt(btn.getAttribute("data-wish-save"), 10)];
+      if (state.balance < 100) { toast(t("fundNo")); return; }
+      state.balance -= 100; w.saved = Math.min(w.need, w.saved + 100);
+      renderBalance(); renderWishes();
+      if (w.saved >= w.need) toast(t("wishUnlock"));
+    });
+    $("wishAdd").addEventListener("click", function(){
+      var name = $("wName").value.trim();
+      var price = parseFloat($("wPrice").value), pts = parseInt($("wPts").value, 10);
+      if (!name || !(price >= 0) || !(pts > 0)) { toast(t("wishFill")); return; }
+      state.wishes.push({ name: name, price: price, cur: $("wCur").value, need: pts, saved: 0 });
+      $("wName").value = ""; $("wPrice").value = ""; $("wPts").value = "";
+      renderWishes(); toast(t("wishAdded"));
+    });
+
+    $("raiseBtn").addEventListener("click", function(){
+      if (state.raisePending) return;
+      state.raisePending = parseInt($("raiseAmt").value, 10);
+      $("raiseBox").innerHTML = '<div class="note-box"><div class="row" style="justify-content:space-between;"><span>'+t("raisePending")+' (+'+fmt(state.raisePending)+')</span><button type="button" class="btn sm good" id="raiseApprove">'+t("raiseApprove")+'</button></div></div>';
+      toast(t("raiseSent"));
+      $("raiseApprove").addEventListener("click", function(){
+        state.creditLimit += state.raisePending; state.raisePending = 0;
+        $("raiseBox").innerHTML = '<span class="chip good">'+t("raiseOk")+'</span>';
+        renderCredit();
+      });
+    });
+    $("spendBtn").addEventListener("click", function(){
+      if (state.creditLimit - state.creditUsed < 150) { toast(t("spendNo")); return; }
+      state.creditUsed += 150; renderCredit(); toast(t("spendOk"));
+    });
+
+    function vaultEchoFromInputs(){
+      var p = parseInt($("vaultPts").value, 10) || 0, m = parseFloat($("vaultMoney").value) || 0;
+      $("vaultEcho").innerHTML = '<span class="num">'+fmt(p)+'</span>'+t("vaultEchoSuffix")+'<span class="num">'+$("vaultCur").value+' '+fmt(m)+'</span>';
+    }
+    ["vaultPts", "vaultMoney", "vaultCur"].forEach(function(id){ $(id).addEventListener("input", vaultEchoFromInputs); });
+    $("vaultApply").addEventListener("click", function(){
+      if (state.vault.pending) {
+        state.vault = { pts: parseInt($("vaultPts").value, 10) || 1000, money: parseFloat($("vaultMoney").value) || 0, cur: $("vaultCur").value, pending: false };
+        renderVault(); toast(t("vaultDone"));
+      } else {
+        state.vault.pending = true; renderVault();
+        $("vaultState").textContent = t("vaultWait");
+        $("vaultApply").textContent = t("raiseApprove");
+        toast(t("raiseSent"));
+      }
+    });
+
+    ["fxAmt", "fxFrom", "fxTo"].forEach(function(id){ $(id).addEventListener("input", renderFx); $(id).addEventListener("change", renderFx); });
+    $("fxSwap").addEventListener("click", function(){
+      var a = $("fxFrom").value; $("fxFrom").value = $("fxTo").value; $("fxTo").value = a; renderFx();
+    });
+    document.querySelectorAll("[data-qamt]").forEach(function(b){
+      b.addEventListener("click", function(){ $("fxAmt").value = b.getAttribute("data-qamt"); renderFx(); });
+    });
+
+    /* ---- 吃什麼 ---- */
+    $("foodGrid").addEventListener("click", function(e){
+      var btn = e.target.closest("[data-food]");
+      if (!btn) return;
+      state.pickedFood = parseInt(btn.getAttribute("data-food"), 10);
+      $("eatThisBtn").disabled = false; $("videoBtn").disabled = false;
+      $("pickHint").textContent = "";
+      renderFoods();
+    });
+    $("shakeBtn").addEventListener("click", function(){
+      if (state.rolling || !state.foods.length) return;
+      state.rolling = true;
+      $("shakeCard").classList.add("shaking");
+      var ticks = 0;
+      var iv = setInterval(function(){
+        state.pickedFood = Math.floor(Math.random() * state.foods.length);
+        $("stageArt").innerHTML = FOOD_ART[state.foods[state.pickedFood].icon];
+        $("pickName").textContent = state.foods[state.pickedFood].name;
+        ticks++;
+        if (ticks > 11) {
+          clearInterval(iv); state.rolling = false;
+          $("shakeCard").classList.remove("shaking");
+          $("eatThisBtn").disabled = false; $("videoBtn").disabled = false;
+          renderFoods();
+        }
+      }, 110);
+    });
+    $("askBtn").addEventListener("click", function(){ $("askMsg").textContent = t("askMsg"); });
+    $("eatThisBtn").addEventListener("click", function(){
+      if (state.pickedFood < 0) return;
+      $("pickHint").textContent = t("pickedMsg");
+      toast(t("pickedMsg") + " " + state.foods[state.pickedFood].name);
+    });
+    $("videoBtn").addEventListener("click", function(){
+      if (state.pickedFood < 0) return;
+      $("videoDish").textContent = state.foods[state.pickedFood].name;
+      $("videoBox").classList.add("open");
+      toast(t("videoStart"));
+    });
+    $("videoEnd").addEventListener("click", function(){ $("videoBox").classList.remove("open"); });
+    $("foodAdd").addEventListener("click", function(){
+      var name = $("fName").value.trim();
+      if (!name) { toast(t("foodFill")); return; }
+      state.foods.push({ icon: $("fIcon").value, name: name, by: "me" });
+      $("fName").value = "";
+      renderFoods(); toast(t("foodAdded"));
+    });
+
+    /* ---- 位置 ---- */
+    $("consentSwitch").addEventListener("click", function(){
+      if (state.loc.on) { stopLoc(true); return; }
+      state.loc.on = true; state.loc.endsAt = Date.now() + 30 * 60000;
+      state.loc.log.push(nowTimeStr() + " " + t("locOn"));
+      renderLoc(); toast(t("locStarted"));
+    });
+    document.querySelectorAll("[data-dur]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var d = btn.getAttribute("data-dur");
+        if (d === "safe") {
+          state.loc.log.push(nowTimeStr() + " " + t("locSafe"));
+          renderLoc(); toast(t("locSafe")); return;
+        }
+        state.loc.endsAt = Date.now() + parseInt(d, 10) * 60000;
+        renderLoc(); toast(t("locStarted"));
+      });
+    });
+    $("homeBtn").addEventListener("click", function(){
+      state.loc.log.push(nowTimeStr() + " " + t("locHome"));
+      renderLoc(); toast(t("locHome"));
+    });
+    $("stopBtn").addEventListener("click", function(){ stopLoc(true); });
+
+    /* ================= 啟動 ================= */
+    seed();
+    renderAll();
+    tick();
+    setInterval(tick, 1000);
+    </script>
+  </body>
+</html>
