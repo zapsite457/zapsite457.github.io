@@ -1,0 +1,9 @@
+{
+  "name": "zapsite-chat-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node test/run.mjs",
+    "dev": "MOCK=1 node dev-server.mjs"
+  }
+}

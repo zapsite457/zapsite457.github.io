@@ -1,0 +1,5 @@
+# Copy to .dev.vars for `wrangler dev`. Never commit .dev.vars.
+# Leave the key blank and set MOCK=1 to try the worker without Anthropic.
+ANTHROPIC_API_KEY=
+MOCK=1
+MODEL=claude-haiku-5-5

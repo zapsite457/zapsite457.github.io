@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assistant test (private) | Zapsite</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Private test page for the Zapsite automated assistant. Not part of the public site.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<header class="nav"><div class="w"><a class="logo" href="index.html" aria-label="Zapsite home"><img src="img/zapsite-logo-dark.svg" alt="Zapsite" width="134" height="32"></a><button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button><nav id="mnav"><div class="links"><a href="index.html#work">Work</a><a href="services.html">Services</a><a href="how-it-works.html">How it works</a><a href="pricing.html">Pricing</a><a href="faq.html">FAQ</a></div><a class="btn" href="get-started.html">Get started →</a></nav></div></header>
+<main class="w" style="padding:72px 0 160px;max-width:760px">
+<p class="eyebrow">Private test</p>
+<h1 style="font-size:clamp(2rem,4vw,3rem);letter-spacing:-.03em;margin:8px 0 16px">Assistant test page</h1>
+<p class="lead" style="color:#c9d1e6;font-size:1.15rem">This page is not linked from the live site. The button at the bottom right opens the Zapsite Assistant. It is automated — you are not talking to a person.</p>
+<p class="hint" id="zs-config" style="margin-top:22px"></p>
+<p class="hint">After the worker is deployed, open this page with <span style="color:#fff">?endpoint=https://your-worker.workers.dev</span>. Leave the endpoint off to use the local mock on port 8787. The fallback form uses the same FormSubmit enquiry flow as the order form unless you pass <span style="color:#fff">?enquiry=</span> for a test inbox.</p>
+</main>
+<footer><div class="w"><div class="fb"><span>© 2026 Zapsite · ABN 58 843 461 747</span><span>Test page · not indexed</span></div></div></footer>
+<script src="site.js"></script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var endpoint = q.get("endpoint") || "http://127.0.0.1:8787";
+  var enquiry = q.get("enquiry") || "https://formsubmit.co/ajax/ian.socialstudio@gmail.com";
+  var note = document.getElementById("zs-config");
+  note.textContent = "Chat endpoint: " + endpoint;
+  var s = document.createElement("script");
+  s.src = "chat-widget/chat-widget.js";
+  s.dataset.endpoint = endpoint;
+  s.dataset.business = q.get("business") || "Zapsite";
+  s.dataset.colour = q.get("colour") || q.get("color") || "#3b6cff";
+  s.dataset.enquiry = enquiry;
+  s.dataset.contactName = q.get("contact") || "Ian";
+  s.dataset.contactEmail = q.get("contactEmail") || "ian.socialstudio@gmail.com";
+  if (q.get("start")) s.dataset.start = q.get("start");
+  if (q.get("fresh")) s.dataset.fresh = q.get("fresh");
+  document.body.appendChild(s);
+})();
+</script>
+</body>
+</html>

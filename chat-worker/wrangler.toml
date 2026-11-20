@@ -1,0 +1,33 @@
+name = "zapsite-chat"
+main = "src/index.js"
+compatibility_date = "2026-11-10"
+
+# Production defaults. Override in the dashboard or with `wrangler secret` / vars.
+# ANTHROPIC_API_KEY is NOT set here. Put it with:
+#   wrangler secret put ANTHROPIC_API_KEY
+[vars]
+MODEL = "claude-haiku-5-5"
+MOCK = "0"
+MAX_TOKENS = "600"
+MAX_MESSAGE_CHARS = "1000"
+MAX_MESSAGES = "16"
+RATE_LIMIT = "20"
+RATE_WINDOW_SEC = "600"
+EFFORT = "low"
+BUSINESS_NAME = "Zapsite"
+CONTACT_NAME = "Ian"
+
+# Text import for the FAQ. The file lives at the repo root so the same
+# knowledge is what the prompt is built from.
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true
+
+# Optional: durable per-IP counts across isolates. Without this binding the
+# worker still rate-limits inside each isolate (see src/logic.js).
+# Create a namespace, then uncomment and fill in the id:
+#   wrangler kv namespace create RATE_LIMIT_KV
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT_KV"
+# id = "replace-with-namespace-id"
